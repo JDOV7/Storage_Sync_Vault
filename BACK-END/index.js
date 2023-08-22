@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 
 import routerUsuario from "./Usuarios/index.js";
 import routerAuth from "./Auth/AuthRouter.js";
+import db from "./Config/db.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,14 @@ const accessLogStream = fs.createWriteStream(
 app.use(morgan("combined", { stream: accessLogStream }));
 
 dotenv.config();
+
+try {
+  await db.authenticate();
+  db.sync();
+  console.log("conexion correcta a la db");
+} catch (error) {
+  console.log(error);
+}
 
 app.use("/auth", routerAuth);
 app.use("/usuarios", routerUsuario);

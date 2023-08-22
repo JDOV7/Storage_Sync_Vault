@@ -7,9 +7,12 @@
 ## 🚀 Informacion General
 ***
 
-Storage Sync Vault es un servicio en la similar a Dropbox o Google Drive que permite almacenar archivos de todo tipo (documentos personales, fotografías, videos, y un larguísimo etcétera) de una forma mucho más segura para los usuarios y, sobre todo, para la propia página.
+Storage Sync Vault es un servicio similar a Mega o Dropbox, el cual permite almacenar archivos de todo tipo (documentos personales, fotografías, videos, y un larguísimo etcétera) de una forma mucho más segura para los usuarios y, sobre todo, para la propia página.
 
 Funcionalidades: 
+* Crear cuenta
+* Confirmar cuenta por medio de un token enviado al email
+* Logeo
 
 
 ## 💻 Tecnologias
@@ -26,11 +29,24 @@ Funcionalidades:
 
 ## 🛠️ Instalacion
 ***
-Para la instalacion, primero tener ```node 18.14.2``` y luejo seguir los pasos siguiente.
+Para la instalacion, primero tener ```node 18.14.2``` y luego seguir los pasos siguientes.
+El aplicacion esta divida en 2 proyectos una API Rest y un frontend.
+
+Para ejecutar el backend se debe hacer lo siguiente:
+
 ```
 $ git clone https://github.com/JDOV7/Storage_Sync_Vault.git
-$ cd ../path/to/the/file
+$ cd ../path/to/the/dir/BACK-END
 $ npm install
-$ npm run start
+$ npm run dev
 ```
+
+Para ejecutar el frontend se debe hacer lo siguiente una vez clonado el repositorio:
+
+```
+$ cd ../path/to/the/dir/FRONT-END
+$ npm install
+$ npm run dev
+```
+
 Ademas de esto se debe tener una base de datos en MySQL y tener una cuenta en mailtrap para probar los correos.
