@@ -22,7 +22,7 @@ const Usuarios = db.define(
   {
     hooks: {
       async beforeCreate(usuario) {
-        usuario.TokenAcceso = await creandoTokenAcceso();
+        usuario.TokenAcceso = await creandoTokenAcceso(10);
         usuario.Password = Usuarios.prototype.hashPassword(usuario.Password);
       },
     },
@@ -36,4 +36,14 @@ Usuarios.prototype.validarPassword = function (password) {
 Usuarios.prototype.hashPassword = function (password) {
   return hashSync(password, genSaltSync(10), null);
 };
+
+Usuarios.prototype.obtenerDatos = function () {
+  const datos = {
+    Nombres: this.Nombres,
+    IdUsuarios: this.IdUsuarios,
+    IdPlanes: this.IdPlanes,
+  };
+  return datos;
+};
+
 export default Usuarios;

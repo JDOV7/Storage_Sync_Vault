@@ -67,7 +67,7 @@ const validandoConfirmarCuenta = async (req, res, next) => {
   try {
     console.log(req.params);
     const datos = [
-      { nombre: "TokenAcceso", longMin: 40, longMax: 60, tipo: tipoDatos[4] },
+      { nombre: "TokenAcceso", longMin: 10, longMax: 10, tipo: tipoDatos[4] },
     ];
 
     const validarVaciosRespuesta = await validarVacios(datos, req);

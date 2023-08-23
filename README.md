@@ -1,9 +1,9 @@
 # Storage Sync Vault
 
 ## Tabla de Contenidos
-1. [Informacion General](#-informacion-general)
-2. [Tecnologias](#-tecnologias)
-3. [Instalacion](#%EF%B8%8F-instalacion)
+1. [🚀 Informacion General](#-informacion-general)
+2. [💻 Tecnologias](#-tecnologias)
+3. [🛠️ Instalacion](#%EF%B8%8F-instalacion)
 ## 🚀 Informacion General
 ***
 
@@ -19,20 +19,22 @@ Funcionalidades:
 ***
 ![JavaScript](https://img.shields.io/badge/JavaScript-marker?logo=javascript&logoColor=black&color=F7DF1E) ![NodeJS](https://img.shields.io/badge/NodeJS-marker?logo=nodedotjs&labelColor=white) ![Express](https://img.shields.io/badge/Express-marker?color=white) ![MySQL](https://img.shields.io/badge/MySQL-marker?logo=mysql&logoColor=black&labelColor=white&color=67B8D5) ![Sequelize](https://img.shields.io/badge/Sequelize-marker?logo=sequelize&logoColor=67B8D5&labelColor=white&color=67B8D5) 
 
- Tecnologias usadas:
+ Principales tecnologias usadas para el Back-End:
 * NodeJS: Version 18.14.2
 * Express: Version 4.18.2
 * MySQL: Version *
 * Sequelize: Version 6.32.1
 * Multer: Version 1.4.5-lts.1
 
+Principales tecnologias usadas para el Front-End:
+
 
 ## 🛠️ Instalacion
 ***
-Para la instalacion, primero tener ```node 18.14.2``` y luego seguir los pasos siguientes.
-El aplicacion esta divida en 2 proyectos una API Rest y un frontend.
+Para la instalacion, primero se debe tener instalado```node 18.14.2``` y luego seguir los pasos siguientes.
+La aplicacion esta dividida en 2 proyectos, una API Rest y un Front-End.
 
-Para ejecutar el backend se debe hacer lo siguiente:
+Para ejecutar el Back-End se debe hacer lo siguiente:
 
 ```
 $ git clone https://github.com/JDOV7/Storage_Sync_Vault.git
@@ -41,7 +43,7 @@ $ npm install
 $ npm run dev
 ```
 
-Para ejecutar el frontend se debe hacer lo siguiente una vez clonado el repositorio:
+Para ejecutar el Front-End se debe hacer lo siguiente una vez clonado el repositorio:
 
 ```
 $ cd ../path/to/the/dir/FRONT-END
