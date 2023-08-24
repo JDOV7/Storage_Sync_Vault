@@ -33,6 +33,18 @@ const Objetos = db.define(
         }
         objecto.NombreLogico = objecto.IdObjetos;
       },
+      async beforeBulkCreate(archivos) {
+        archivos.forEach((archivo) => {
+          if (archivo.IdObjetos != archivo.IdUsuarios) {
+            // console.log(objecto);
+            archivo.UbicacionLogica =
+              archivo.UbicacionLogica + "/" + archivo.IdObjetos;
+            archivo.UbicacionVista =
+              archivo.UbicacionVista + "/" + archivo.NombreVista;
+          }
+          archivo.NombreLogico = archivo.IdObjetos;
+        });
+      },
     },
   }
 );

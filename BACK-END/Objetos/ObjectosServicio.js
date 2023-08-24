@@ -4,6 +4,7 @@ import {
   obtenerDatosPadre,
   crearDirectorioReal,
   obtenerElementosDirectorio,
+  eliminarDirectorio,
 } from "./ObjectosDAO.js";
 
 const subiendoArchivosServicio = async (datos = {}) => {
@@ -30,10 +31,17 @@ const obtenerElementosDirectorioServicio = async (datos = {}) => {
   const respuesta = await obtenerElementosDirectorio(datos);
   return respuesta;
 };
+
+const eliminarDirectorioServicio = async (datos = {}) => {
+  const respuesta = await eliminarDirectorio(datos);
+  return respuesta;
+};
+
 export {
   subiendoArchivosServicio,
   crearDirectorioServicio,
   obtenerDatosPadreServicio,
   crearDirectorioRealServicio,
   obtenerElementosDirectorioServicio,
+  eliminarDirectorioServicio,
 };

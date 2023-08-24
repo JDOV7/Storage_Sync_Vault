@@ -1,17 +1,55 @@
 import { Op } from "sequelize";
-import { mkdir } from "node:fs/promises";
+import { mkdir, rmdir, rm } from "node:fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+import { removeSync } from "fs-extra/esm";
+
 import db from "../Config/db.js";
 import { Objetos } from "../Models/index.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const subiendoArchivos = async (datos = {}) => {
+  const IdUsuarios = datos.usuario.IdUsuarios;
+  const UbicacionVista = datos.headers.padre.datos.UbicacionVista;
+  const UbicacionLogica = datos.headers.padre.datos.UbicacionLogica;
+  const Padre =
+    UbicacionLogica.split("/")[UbicacionLogica.split("/").length - 1];
+  const EsDirectorio = false;
+  // const IdCajaFuertes = "";
+  const FechaCreacion = new Date();
+  const FechaActualizacion = FechaCreacion;
+  const archivos = [];
+  datos.files.forEach((archivo) => {
+    const dataArchivo = {
+      IdObjetos: archivo.filename.split(".")[0],
+      IdUsuarios,
+      // IdCajaFuertes,
+      UbicacionVista,
+      UbicacionLogica,
+      Padre,
+      EsDirectorio,
+      FechaCreacion,
+      FechaActualizacion,
+      NombreVista: archivo.originalname,
+      Mime: archivo.mimetype,
+      PesoMB: archivo.size,
+    };
+    archivos.push(dataArchivo);
+  });
+
+  const subiendoArchivos = await Objetos.bulkCreate(archivos);
+  console.log(subiendoArchivos);
+
   return {
     status: 200,
-    message: "creandoNuevoObjecto",
+    message: "Archivos subidos correctamente",
     data: {
-      usuario: datos.usuario,
-      body: datos.body,
-      files: datos.files,
+      subiendoArchivos,
+      // archivos,
+      // files: datos.files,
     },
   };
 };
@@ -83,13 +121,36 @@ const crearDirectorioReal = async (ubicacion) => {
 };
 
 const obtenerDatosPadre = async function (IdObjetos) {
-  const padre = await Objetos.findByPk(IdObjetos);
-  const datos = {
-    UbicacionVista: padre.UbicacionVista,
-    UbicacionLogica: padre.UbicacionLogica,
-    IdUsuarios: padre.IdUsuarios,
-  };
-  return datos;
+  try {
+    const padre = await Objetos.findOne({
+      where: {
+        [Op.and]: [{ IdObjetos }, { EsDirectorio: true }],
+      },
+    });
+    if (!padre) {
+      throw new EntidadNoExisteError("Este directorio no existe");
+    }
+    const datos = {
+      UbicacionVista: padre.UbicacionVista,
+      UbicacionLogica: padre.UbicacionLogica,
+      IdUsuarios: padre.IdUsuarios,
+    };
+    return {
+      status: 200,
+      datos,
+    };
+  } catch (error) {
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof EntidadNoExisteError) {
+      status = 404;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+    };
+  }
 };
 
 const obtenerElementosDirectorio = async (datos = {}) => {
@@ -104,7 +165,6 @@ const obtenerElementosDirectorio = async (datos = {}) => {
             },
           },
           { IdUsuarios },
-          { EsDirectorio: true },
         ],
       },
       attributes: {
@@ -133,7 +193,106 @@ const obtenerElementosDirectorio = async (datos = {}) => {
     let status = 500;
     let message = "Error en el servidor";
     if (error instanceof EntidadNoExisteError) {
-      status = 400;
+      status = 404;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+    };
+  }
+};
+
+const eliminarDirectorio = async (datos = {}) => {
+  try {
+    const { padre, IdObjetos, IdUsuarios } = datos;
+    const todosLosObjetos = await Objetos.findAll({
+      where: {
+        [Op.and]: [
+          {
+            UbicacionLogica: {
+              [Op.like]: `%${IdObjetos}%`,
+            },
+          },
+          { IdUsuarios },
+        ],
+      },
+    });
+    const resEliminarReal = await eliminandoDirectoriosReal(
+      padre.datos.UbicacionLogica
+    );
+    if (resEliminarReal.status != 200) {
+      throw new Error(resEliminarReal.message);
+    }
+    return {
+      status: 200,
+      datos: { ...datos, todosLosObjetos, resEliminarReal },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof EntidadNoExisteError) {
+      status = 404;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+    };
+  }
+};
+
+const eliminandoDirectoriosReal = async (ubicacion = "") => {
+  try {
+    console.log(
+      "------------------eliminandoDirectoriosReal-------------------"
+    );
+    console.log(ubicacion);
+    const projectFolder = new URL(
+      `../public/uploads${ubicacion}`,
+      import.meta.url
+    );
+    // __dirname +
+    //   `../../public/uploads${req.headers.padre.datos.UbicacionLogica}/`;
+    // console.log(`${__dirname}../../public/uploads${ubicacion}`);
+    // console.log(`${__dirname}${ubicacion}`);
+    try {
+      const ubicacionGlobal = `${__dirname}../../public/uploads${ubicacion}/`;
+      // throw new Error("");
+      const eliminarDir = await removeSync(ubicacionGlobal);
+    } catch (error) {
+      if (error.code === "ENOTEMPTY") {
+        await eliminandoDirectoriosReal(ubicacion);
+      }
+    }
+
+    // const eliminarDirContenido = await rm(ubicacionGlobal, {
+    //   recursive: true,
+    //   force: true,
+    // });
+    // console.log(eliminarDirContenido);
+    // // b602843b-0ada-4ee3-974f-eb835480de08
+    // const eliminarDir = await rmdir(ubicacionGlobal, {
+    //   recursive: true,
+    //   force: true,
+    // });
+    // console.log(eliminarDir);
+
+    return {
+      status: 200,
+      // datos: { eliminarDirContenido, eliminarDir },
+    };
+  } catch (error) {
+    console.log(error);
+    console.log(error.code);
+    let status = 500;
+    let message = "Error en el servidor eliminandoDirectoriosReal";
+    // if (error.code === "ENOTEMPTY") {
+    //   await eliminandoDirectoriosReal(ubicacion);
+    // }
+    if (error instanceof EntidadNoExisteError) {
+      status = 404;
       message = error.message;
     }
     return {
@@ -150,4 +309,5 @@ export {
   obtenerDatosPadre,
   crearDirectorioReal,
   obtenerElementosDirectorio,
+  eliminarDirectorio,
 };

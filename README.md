@@ -32,6 +32,7 @@ Principales tecnologias usadas para el Front-End:
 ## 🛠️ Instalacion
 ***
 Para la instalacion, primero se debe tener instalado```node 18.14.2``` y luego seguir los pasos siguientes.
+
 La aplicacion esta dividida en 2 proyectos, una API Rest y un Front-End.
 
 Para ejecutar el Back-End se debe hacer lo siguiente:

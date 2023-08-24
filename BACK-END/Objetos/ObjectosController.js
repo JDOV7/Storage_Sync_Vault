@@ -4,13 +4,15 @@ import {
   //   obtenerDatosPadreServicio,
   crearDirectorioRealServicio,
   obtenerElementosDirectorioServicio,
+  eliminarDirectorioServicio,
 } from "./ObjectosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 // import { ValidarPerteneceAlUsuarioM } from "../Validadores/ValidarPerteneceAlUsuario.js";
 
 const subiendoArchivosController = async (req, res) => {
   try {
-    throw new EntidadNoExisteError("No existe el padre");
+    // console.log(req.files);
+    // throw new EntidadNoExisteError("No existe el padre");
 
     const respuesta = await subiendoArchivosServicio(req);
     if (respuesta.status !== 200) {
@@ -47,8 +49,8 @@ const crearDirectorioController = async (req, res) => {
     // if (!padre || padre.IdUsuarios != IdUsuarios) {
     //   throw new EntidadNoExisteError("No existe el padre");
     // }
-    datosDirRaiz.UbicacionVista = padre.UbicacionVista;
-    datosDirRaiz.UbicacionLogica = padre.UbicacionLogica;
+    datosDirRaiz.UbicacionVista = padre.datos.UbicacionVista;
+    datosDirRaiz.UbicacionLogica = padre.datos.UbicacionLogica;
 
     const respuesta = await crearDirectorioServicio(datosDirRaiz);
     console.log(respuesta);
@@ -70,7 +72,7 @@ const crearDirectorioController = async (req, res) => {
     let message = "Error en el servidor controller";
 
     if (error instanceof EntidadNoExisteError) {
-      status = 400;
+      status = 404;
       message = error.message;
     }
 
@@ -102,8 +104,34 @@ const obtenerElementosDirectorioController = async (req, res) => {
   }
 };
 
+const eliminarDirectorioController = async (req, res) => {
+  try {
+    // console.log(req.files);
+    // throw new EntidadNoExisteError("No existe el padre");
+
+    const respuesta = await eliminarDirectorioServicio({
+      ...req.body,
+      IdObjetos: req.params.IdObjetos,
+      ...req.usuario,
+    });
+    if (respuesta.status !== 200) {
+      return res.status(respuesta.status).json({
+        status: respuesta.status,
+        message: respuesta.message,
+      });
+    }
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error.message,
+    });
+  }
+};
+
 export {
   subiendoArchivosController,
   crearDirectorioController,
   obtenerElementosDirectorioController,
+  eliminarDirectorioController,
 };
