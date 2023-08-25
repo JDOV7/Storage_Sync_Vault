@@ -6,6 +6,7 @@ import { removeSync } from "fs-extra/esm";
 
 import db from "../Config/db.js";
 import { Objetos } from "../Models/index.js";
+import { crearObjectosEliminadosServicio } from "../ObjectosEliminados/ObjectosEliminadosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,6 +22,7 @@ const subiendoArchivos = async (datos = {}) => {
   // const IdCajaFuertes = "";
   const FechaCreacion = new Date();
   const FechaActualizacion = FechaCreacion;
+  const EstaEliminado = false;
   const archivos = [];
   datos.files.forEach((archivo) => {
     const dataArchivo = {
@@ -36,6 +38,7 @@ const subiendoArchivos = async (datos = {}) => {
       NombreVista: archivo.originalname,
       Mime: archivo.mimetype,
       PesoMB: archivo.size,
+      EstaEliminado,
     };
     archivos.push(dataArchivo);
   });
@@ -124,7 +127,11 @@ const obtenerDatosPadre = async function (IdObjetos) {
   try {
     const padre = await Objetos.findOne({
       where: {
-        [Op.and]: [{ IdObjetos }, { EsDirectorio: true }],
+        [Op.and]: [
+          { IdObjetos },
+          { EsDirectorio: true },
+          { EstaEliminado: false },
+        ],
       },
     });
     if (!padre) {
@@ -165,6 +172,7 @@ const obtenerElementosDirectorio = async (datos = {}) => {
             },
           },
           { IdUsuarios },
+          { EstaEliminado: false },
         ],
       },
       attributes: {
@@ -204,6 +212,7 @@ const obtenerElementosDirectorio = async (datos = {}) => {
 };
 
 const eliminarDirectorio = async (datos = {}) => {
+  const transaction = await db.transaction();
   try {
     const { padre, IdObjetos, IdUsuarios } = datos;
     const todosLosObjetos = await Objetos.findAll({
@@ -215,20 +224,43 @@ const eliminarDirectorio = async (datos = {}) => {
             },
           },
           { IdUsuarios },
+          { EstaEliminado: false },
         ],
       },
+      attributes: ["IdObjetos"],
     });
-    const resEliminarReal = await eliminandoDirectoriosReal(
-      padre.datos.UbicacionLogica
-    );
-    if (resEliminarReal.status != 200) {
-      throw new Error(resEliminarReal.message);
-    }
+    const respuestaEliminarObjectos = await crearObjectosEliminadosServicio(todosLosObjetos);
+    // const eliminarObjectos = await Objetos.update(
+    //   { EstaEliminado: true },
+    //   {
+    //     where: {
+    //       [Op.and]: [
+    //         {
+    //           UbicacionLogica: {
+    //             [Op.like]: `%${IdObjetos}%`,
+    //           },
+    //         },
+    //         { IdUsuarios },
+    //         { EstaEliminado: false },
+    //       ],
+    //     },
+    //   }
+    // );
+    // const resEliminarReal = await eliminandoDirectoriosReal(
+    //   padre.datos.UbicacionLogica
+    // );
+    // if (resEliminarReal.status != 200) {
+    //   throw new Error(resEliminarReal.message);
+    // }
+    await transaction.commit();
     return {
       status: 200,
-      datos: { ...datos, todosLosObjetos, resEliminarReal },
+      // datos: { ...datos, todosLosObjetos, resEliminarReal },
+      // datos: { ...datos, eliminarObjectos },
+      datos: { ...datos, todosLosObjetos, respuestaEliminarObjectos },
     };
   } catch (error) {
+    await transaction.rollback();
     console.log(error);
     let status = 500;
     let message = "Error en el servidor";
@@ -253,10 +285,6 @@ const eliminandoDirectoriosReal = async (ubicacion = "") => {
       `../public/uploads${ubicacion}`,
       import.meta.url
     );
-    // __dirname +
-    //   `../../public/uploads${req.headers.padre.datos.UbicacionLogica}/`;
-    // console.log(`${__dirname}../../public/uploads${ubicacion}`);
-    // console.log(`${__dirname}${ubicacion}`);
     try {
       const ubicacionGlobal = `${__dirname}../../public/uploads${ubicacion}/`;
       // throw new Error("");
@@ -266,18 +294,6 @@ const eliminandoDirectoriosReal = async (ubicacion = "") => {
         await eliminandoDirectoriosReal(ubicacion);
       }
     }
-
-    // const eliminarDirContenido = await rm(ubicacionGlobal, {
-    //   recursive: true,
-    //   force: true,
-    // });
-    // console.log(eliminarDirContenido);
-    // // b602843b-0ada-4ee3-974f-eb835480de08
-    // const eliminarDir = await rmdir(ubicacionGlobal, {
-    //   recursive: true,
-    //   force: true,
-    // });
-    // console.log(eliminarDir);
 
     return {
       status: 200,

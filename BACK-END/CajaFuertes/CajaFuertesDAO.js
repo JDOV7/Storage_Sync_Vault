@@ -36,6 +36,7 @@ const crearCajaFuerte = async (IdUsuario = "", transaction) => {
       PesoMB: 0,
       FechaCreacion: new Date(),
       FechaActualizacion: new Date(),
+      EstaEliminado: false,
     };
 
     const dicRoot = await crearDirectorio(datosDirRaiz, transaction);

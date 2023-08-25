@@ -114,6 +114,7 @@ const confirmarCuenta = async (usuario = {}) => {
       message: "Cuenta confirmada",
     };
   } catch (error) {
+    console.log(error);
     let status = 500;
     let message = "Error en el servidor";
     if (error instanceof TokenInvalidoError) {

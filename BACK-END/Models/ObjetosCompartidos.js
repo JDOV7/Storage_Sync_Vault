@@ -8,5 +8,6 @@ const ObjetosCompartidos = db.define("ObjetosCompartidos", {
     allowNull: false,
     defaultValue: DataTypes.UUIDV4,
   },
+  FechaCompartido: { type: DataTypes.DATE },
 });
 export default ObjetosCompartidos;

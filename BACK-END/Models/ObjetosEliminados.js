@@ -9,5 +9,6 @@ const ObjetosEliminados = db.define("ObjetosEliminados", {
     defaultValue: DataTypes.UUIDV4,
   },
   FechaEliminado: { type: DataTypes.DATE },
+  FechaMaxRecuperacion: { type: DataTypes.DATE },
 });
 export default ObjetosEliminados;

@@ -20,6 +20,7 @@ const Objetos = db.define(
     PesoMB: { type: DataTypes.FLOAT },
     FechaCreacion: { type: DataTypes.DATE },
     FechaActualizacion: { type: DataTypes.DATE },
+    EstaEliminado: { type: DataTypes.BOOLEAN },
   },
   {
     hooks: {

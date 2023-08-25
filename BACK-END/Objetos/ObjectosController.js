@@ -44,6 +44,7 @@ const crearDirectorioController = async (req, res) => {
       PesoMB: 0,
       FechaCreacion: new Date(),
       FechaActualizacion: new Date(),
+      EstaEliminado: false,
     };
     // const padre = await obtenerDatosPadreServicio(Padre);
     // if (!padre || padre.IdUsuarios != IdUsuarios) {
