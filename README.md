@@ -13,10 +13,17 @@ Storage Sync Vault es un servicio similar a Mega o Dropbox, el cual permite alma
 
 <div align="justify">
 
-Funcionalidades: 
+Funcionalidades publicas: 
 * Crear cuenta
-* Confirmar cuenta por medio de un token enviado al email
-* Logeo
+* Confirmar cuenta por medio de un token enviado al email( Pendiente el envio del email )
+* Inicio de sesion
+
+Funcionalidades privadas( Una vez confirmada la cuenta y haber iniciado sesion ):
+* Creacion de folders
+* Obtener los elementos de los folders
+* Eliminar folders incluyendo su contenido
+* Subir archivos a los folders
+* Recuperar folders eliminados( En construccion )
 
 </div>
 
@@ -24,7 +31,8 @@ Funcionalidades:
 ***
 <div align="center">
 
-![JavaScript](https://img.shields.io/badge/JavaScript-marker?logo=javascript&logoColor=black&color=F7DF1E) ![NodeJS](https://img.shields.io/badge/NodeJS-marker?logo=nodedotjs&labelColor=white) ![Express](https://img.shields.io/badge/Express-marker?color=white) ![MySQL](https://img.shields.io/badge/MySQL-marker?logo=mysql&logoColor=black&labelColor=white&color=67B8D5) ![Sequelize](https://img.shields.io/badge/Sequelize-marker?logo=sequelize&logoColor=67B8D5&labelColor=gray&color=67B8D5) 
+![JavaScript](https://img.shields.io/badge/JavaScript-marker?logo=javascript&logoColor=black&color=F7DF1E) ![NodeJS](https://img.shields.io/badge/NodeJS-marker?logo=nodedotjs&labelColor=white) ![Express](https://img.shields.io/badge/Express-marker?color=white) ![MySQL](https://img.shields.io/badge/MySQL-marker?logo=mysql&logoColor=black&labelColor=white&color=67B8D5) ![Sequelize](https://img.shields.io/badge/Sequelize-marker?logo=sequelize&logoColor=67B8D5&labelColor=gray&color=67B8D5) ![JWT](https://img.shields.io/badge/JWT-badge?logo=jsonwebtokens&labelColor=%23000000&color=white) ![AWS RDS](https://img.shields.io/badge/AWS%20RDS-badge?logo=amazonaws&labelColor=gray&color=orange)
+
 
 </div>
 
@@ -32,11 +40,17 @@ Funcionalidades:
  Principales tecnologias usadas para el Back-End:
 * NodeJS: Version 18.14.2
 * Express: Version 4.18.2
-* MySQL: Version *
 * Sequelize: Version 6.32.1
 * Multer: Version 1.4.5-lts.1
+* JWT: Version 9.0.1
 
 Principales tecnologias usadas para el Front-End:
+
+Bases de datos:
+* MySQL: Version *
+
+Cloud:
+* AWS RDS
 
 
 ## 🛠️ Instalacion

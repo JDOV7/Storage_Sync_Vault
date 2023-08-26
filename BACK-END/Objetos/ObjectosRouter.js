@@ -4,12 +4,14 @@ import {
   crearDirectorioController,
   obtenerElementosDirectorioController,
   eliminarDirectorioController,
+  recuperarDirectorioController,
 } from "./ObjectosController.js";
 import { subirArchivos } from "../Helpers/Multer.js";
 import ValidarToken from "../Helpers/ValidarToken.js";
 import {
   ValidarPerteneceAlUsuario,
-  ValidarPerteneceAlUsuarioHeader,
+  ValidarAunPerteneceAlUsuario,
+  validarEsElDirectorioPrincipalEliminado,
 } from "../Validadores/ValidarPerteneceAlUsuario.js";
 
 const router = express.Router();
@@ -34,6 +36,14 @@ router.delete(
   ValidarToken,
   ValidarPerteneceAlUsuario,
   eliminarDirectorioController
+);
+
+router.put(
+  "/folder/recuperar/:IdObjetos",
+  ValidarToken,
+  ValidarAunPerteneceAlUsuario,
+  validarEsElDirectorioPrincipalEliminado,
+  recuperarDirectorioController
 );
 
 router.post(

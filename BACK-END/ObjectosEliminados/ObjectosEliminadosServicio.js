@@ -1,4 +1,8 @@
-import { crearObjectosEliminados } from "./ObjectosEliminadosDAO.js";
+import {
+  crearObjectosEliminados,
+  crearCarpetaEliminada,
+  esUnObjectoEliminado,
+} from "./ObjectosEliminadosDAO.js";
 
 const crearObjectosEliminadosServicio = async (datos = []) => {
   try {
@@ -12,4 +16,32 @@ const crearObjectosEliminadosServicio = async (datos = []) => {
   }
 };
 
-export { crearObjectosEliminadosServicio };
+const crearCarpetaEliminadaServicio = async (id = "") => {
+  try {
+    const respuesta = await crearCarpetaEliminada(id);
+    return respuesta;
+  } catch (error) {
+    return {
+      status: 500,
+      message: error.message,
+    };
+  }
+};
+
+const esUnObjectoEliminadoServicio = async (IdObjetos, EsDirectorio) => {
+  try {
+    const respuesta = await esUnObjectoEliminado(IdObjetos, EsDirectorio);
+    return respuesta;
+  } catch (error) {
+    return {
+      status: 500,
+      message: error.message,
+    };
+  }
+};
+
+export {
+  crearObjectosEliminadosServicio,
+  crearCarpetaEliminadaServicio,
+  esUnObjectoEliminadoServicio,
+};
