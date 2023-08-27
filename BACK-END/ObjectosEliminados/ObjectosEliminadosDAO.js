@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import { ObjetosEliminados, Objetos } from "../Models/index.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
+import db from "../Config/db.js";
 
 const crearObjectosEliminados = async (datos = []) => {
   try {
@@ -42,7 +43,10 @@ const crearObjectosEliminados = async (datos = []) => {
   }
 };
 
-const crearCarpetaEliminada = async (IdObjetos) => {
+const crearCarpetaEliminada = async (IdObjetos, transaction) => {
+  if (!transaction) {
+    transaction = await db.transaction();
+  }
   try {
     // console.log(IdObjetos);
     // return IdObjetos;
@@ -51,16 +55,20 @@ const crearCarpetaEliminada = async (IdObjetos) => {
     const fechaResultado = new Date(
       new Date().getTime() + diasASumar * milisegundosPorDia
     );
-    const eliminarCarpeta = await ObjetosEliminados.create({
-      IdObjetos,
-      FechaEliminado: new Date(),
-      FechaMaxRecuperacion: fechaResultado,
-    });
+    const eliminarCarpeta = await ObjetosEliminados.create(
+      {
+        IdObjetos,
+        FechaEliminado: new Date(),
+        FechaMaxRecuperacion: fechaResultado,
+      },
+      { transaction }
+    );
     return {
       status: 200,
       message: "Carpeta eliminada exitosamente",
     };
   } catch (error) {
+    await transaction.rollback();
     let status = 500;
     let message = "Error en el servidor";
     return {
@@ -113,4 +121,33 @@ const esUnObjectoEliminado = async (IdObjetos, EsDirectorio) => {
   }
 };
 
-export { crearObjectosEliminados, crearCarpetaEliminada, esUnObjectoEliminado };
+const restaurarDirectorioDB = async (IdObjetos = "", transaction) => {
+  if (!transaction) {
+    transaction = await db.transaction();
+  }
+  try {
+    const restaurar = await ObjetosEliminados.destroy({
+      where: {
+        IdObjetos,
+      },
+      transaction,
+    });
+    return {
+      status: 200,
+      message: "Directorio restaurado",
+    };
+  } catch (error) {
+    await transaction.rollback();
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+    return { status, message };
+  }
+};
+
+export {
+  crearObjectosEliminados,
+  crearCarpetaEliminada,
+  esUnObjectoEliminado,
+  restaurarDirectorioDB,
+};

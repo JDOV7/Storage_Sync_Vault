@@ -8,6 +8,7 @@ import {
   recuperarDirectorioServicio,
 } from "./ObjectosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
+import db from "../Config/db.js";
 // import { ValidarPerteneceAlUsuarioM } from "../Validadores/ValidarPerteneceAlUsuario.js";
 
 const subiendoArchivosController = async (req, res) => {
@@ -32,6 +33,7 @@ const subiendoArchivosController = async (req, res) => {
 };
 
 const crearDirectorioController = async (req, res) => {
+  const transaction = await db.transaction();
   try {
     // console.log(req.usuario);
     const { IdUsuarios } = req.usuario;
@@ -53,8 +55,7 @@ const crearDirectorioController = async (req, res) => {
     // }
     datosDirRaiz.UbicacionVista = padre.datos.UbicacionVista;
     datosDirRaiz.UbicacionLogica = padre.datos.UbicacionLogica;
-
-    const respuesta = await crearDirectorioServicio(datosDirRaiz);
+    const respuesta = await crearDirectorioServicio(datosDirRaiz, transaction);
     console.log(respuesta);
     if (respuesta.status != 200) {
       return res.status(respuesta.status).json({
@@ -66,9 +67,10 @@ const crearDirectorioController = async (req, res) => {
     const respuestaCrearDirReal = await crearDirectorioRealServicio(
       respuesta.data.UbicacionLogica
     );
-
+    await transaction.commit();
     return res.status(200).json(respuesta);
   } catch (error) {
+    await transaction.rollback();
     console.log(error);
     let status = 500;
     let message = "Error en el servidor controller";

@@ -10,9 +10,12 @@ import { Objetos } from "../Models/index.js";
 import {
   crearObjectosEliminadosServicio,
   crearCarpetaEliminadaServicio,
+  restaurarDirectorioDBServicio,
 } from "../ObjectosEliminados/ObjectosEliminadosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 import EntidadNoCreadaError from "../Validadores/Errores/EntidadNoCreadaError.js";
+
+import { moverDir } from "../Helpers/FileSystem.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,11 +71,11 @@ const crearDirectorio = async (datos = {}, transaction) => {
       transaction = await db.transaction();
     }
     const directorio = await Objetos.create(datos, { transaction });
-    await transaction.commit();
     return {
       status: 200,
       message: "Directorio creado correctamente",
       data: {
+        IdObjetos: directorio.IdObjetos,
         UbicacionLogica: directorio.UbicacionLogica,
       },
     };
@@ -88,12 +91,20 @@ const crearDirectorio = async (datos = {}, transaction) => {
 
 const crearDirectorioRaiz = async (datos = {}) => {
   try {
-    const { IdUsuario, IdCajaFuertes } = datos;
-    const projectFolder = new URL(
+    const { IdUsuario, IdCajaFuertes, IdEliminado } = datos;
+    const cajaFuerte = new URL(
       `../public/uploads/${IdUsuario}/${IdCajaFuertes}/`,
       import.meta.url
     );
-    const createDir = await mkdir(projectFolder, { recursive: true });
+    const crearCajaFuerte = await mkdir(cajaFuerte, { recursive: true });
+    const cambiarPermisosCajaFuerte = await chmod(cajaFuerte, 0o777);
+
+    const dirEliminado = new URL(
+      `../public/uploads/${IdUsuario}/${IdEliminado}/`,
+      import.meta.url
+    );
+    const crearDirEliminado = await mkdir(dirEliminado, { recursive: true });
+    const cambiarPermisosDirEliminado = await chmod(dirEliminado, 0o777);
     return {
       status: 200,
       message: "Directorio creado",
@@ -213,6 +224,37 @@ const obtenerElementosDirectorio = async (datos = {}) => {
   }
 };
 
+const obtenerCarpetaDestinoEliminados = async (IdUsuarios = "") => {
+  try {
+    const carpetaEliminados = await Objetos.findOne({
+      where: {
+        [Op.and]: [
+          {
+            IdUsuarios,
+          },
+          { UbicacionVista: `/root/Eliminados-${IdUsuarios}` },
+        ],
+      },
+    });
+    return {
+      UbicacionLogica: carpetaEliminados.UbicacionLogica,
+      UbicacionVista: carpetaEliminados.UbicacionVista,
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof EntidadNoExisteError) {
+      status = 404;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+    };
+  }
+};
+
 const eliminarDirectorio = async (datos = {}) => {
   const transaction = await db.transaction();
   try {
@@ -229,12 +271,50 @@ const eliminarDirectorio = async (datos = {}) => {
           { EstaEliminado: false },
         ],
       },
-      attributes: ["IdObjetos"],
+      attributes: ["IdObjetos", "UbicacionLogica"],
     });
+    if (!todosLosObjetos) {
+      throw new EntidadNoCreadaError("No se pudo eliminar la carpeta");
+    }
+    const buscarCarpetaUbicacionEliminados =
+      await obtenerCarpetaDestinoEliminados(IdUsuarios);
+    if (!buscarCarpetaUbicacionEliminados) {
+      throw new EntidadNoExisteError("No se pudo eliminar la carpeta");
+    }
+    const lugarActual = `${__dirname}../../public/uploads${todosLosObjetos.UbicacionLogica}`;
+    const lugarDestino = `${__dirname}../../public/uploads${buscarCarpetaUbicacionEliminados.UbicacionLogica}/${IdObjetos}`;
+    // const mandarADirEliminados = await moverDir(lugarActual, lugarDestino);
+
+    const descendencia = await obtenerDesendenciaFolder(IdObjetos, false);
+    console.log(descendencia);
+
+    for (const obje of descendencia.data.descendencia) {
+      const moverObjectoBDUno = await moverObjectoBD(
+        obje,
+        transaction,
+        IdObjetos,
+        buscarCarpetaUbicacionEliminados.UbicacionLogica,
+        buscarCarpetaUbicacionEliminados.UbicacionVista
+      );
+      console.log(moverObjectoBDUno);
+      if (moverObjectoBDUno.status != 200) {
+        throw new EntidadNoExisteError("");
+      }
+    }
+    return {
+      status: 200,
+      UbicacionLogica: todosLosObjetos.UbicacionLogica,
+      lugarActual,
+      lugarDestino,
+      descendencia,
+    };
+    // moverDir;
     // console.log(todosLosObjetos.IdObjetos);
     // throw new Error();
+
     const respuestaEliminarCarpeta = await crearCarpetaEliminadaServicio(
-      todosLosObjetos.IdObjetos
+      todosLosObjetos.IdObjetos,
+      transaction
     );
     if (respuestaEliminarCarpeta.status != 200) {
       throw new EntidadNoCreadaError("No se pudo eliminar la carpeta");
@@ -271,17 +351,17 @@ const eliminarDirectorio = async (datos = {}) => {
       // datos: { ...datos, todosLosObjetos, respuestaEliminarObjectos },
     };
   } catch (error) {
-    await transaction.rollback();
     console.log(error);
     let status = 500;
     let message = "Error en el servidor";
     if (error instanceof EntidadNoExisteError) {
       status = 404;
       message = error.message;
-    }
-    if (error instanceof EntidadNoCreadaError) {
+    } else if (error instanceof EntidadNoCreadaError) {
       status = 404;
       message = error.message;
+    } else {
+      await transaction.rollback();
     }
     return {
       status,
@@ -335,34 +415,190 @@ const eliminandoDirectoriosReal = async (ubicacion = "") => {
 
 const recuperarDirectorio = async (datos = {}) => {
   //TODO: cuando se restaure algun objecto se movera a la carpeta /root
+  let transaction = await db.transaction();
   try {
     const {
-      infoObjecto: { UbicacionLogica, IdUsuarios, IdObjetos },
+      infoObjecto: { UbicacionLogica, IdUsuarios, IdObjetos, UbicacionVista },
     } = datos;
-    const nombreDir = "moveExample";
-    // const lugarActual = `${__dirname}../../public/uploads${UbicacionLogica}`;
-    // const lugarActual = `${__dirname}../../public/uploads/4cfb60b6-f6e5-4ed5-b876-cb26d3f92455/ff8bb2b5-afbf-4214-8c02-89f24faa3af8/move`;
 
-    const lugarActual = `E:\\Desarrollo\\Node\\StorageSyncVault\\BACK-END\\public\\uploads\\4cfb60b6-f6e5-4ed5-b876-cb26d3f92455\\ff8bb2b5-afbf-4214-8c02-89f24faa3af8\\3c4b7ae0-6a72-4b74-b535-e7a3c1ce8eae\\38d05eea-b474-402a-a0ae-b1dc54b96fe4`;
-    // const lugarActual = `E:\\Desarrollo\\Node\\StorageSyncVault\\BACK-END\\public\\uploads\\4cfb60b6-f6e5-4ed5-b876-cb26d3f92455\\aee5b324-ef6f-42e1-b50d-517f8cfa2dd0\\9bfb4012-7aad-4577-b003-c35fb046d9a3`;
-    console.log(lugarActual);
-    // const lugarDestino = `${__dirname}../../public/uploads/${IdUsuarios}/${IdObjetos}`;
-    // const lugarDestino = `${__dirname}../../public/uploads/4cfb60b6-f6e5-4ed5-b876-cb26d3f92455/move`;
-    // const lugarDestino = `E:\\Desarrollo\\Node\\StorageSyncVault\\BACK-END\\public\\uploads\\4cfb60b6-f6e5-4ed5-b876-cb26d3f92455\\9bfb4012-7aad-4577-b003-c35fb046d9a3`;
-    const lugarDestino = `E:\\Desarrollo\\Node\\StorageSyncVault\\BACK-END\\public\\uploads\\4cfb60b6-f6e5-4ed5-b876-cb26d3f92455\\38d05eea-b474-402a-a0ae-b1dc54b96fe4`;
-    console.log(lugarDestino);
-    const moviendoDir = await fs.move(lugarActual, lugarDestino, {
-      overwrite: true,
-    });
+    const descendencia = await obtenerDesendenciaFolder(IdObjetos, true);
+    const lugarActual = `${__dirname}../../public/uploads${UbicacionLogica}`;
+    const lugarDestino = `${__dirname}../../public/uploads/${IdUsuarios}/${IdObjetos}`;
+    // console.log(descendencia);
+    for (const obje of descendencia.data.descendencia) {
+      const moverObjectoBDUno = await moverObjectoBD(
+        obje,
+        transaction,
+        IdObjetos
+      );
+      if (moverObjectoBDUno.status != 200) {
+        throw new EntidadNoExisteError("");
+      }
+    }
 
+    const resDirDbEliminada = await restaurarDirectorioDBServicio(
+      IdObjetos,
+      transaction
+    );
+    if (resDirDbEliminada.status != 200) {
+      throw new EntidadNoExisteError("No se pudo restaurar el directorio");
+    }
+
+    if (lugarActual != lugarDestino) {
+      const moviendoDir = await fs.move(lugarActual, lugarDestino, {
+        overwrite: true,
+      });
+    }
+
+    await transaction.commit();
     return {
       status: 200,
       message: "recuperarDirectorio",
       data: {
+        // datos,
         // moviendoDir,
       },
     };
   } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor eliminandoDirectoriosReal";
+    // if (error.code === "ENOTEMPTY") {
+    //   await eliminandoDirectoriosReal(ubicacion);
+    // }
+    if (error instanceof EntidadNoExisteError) {
+      status = 404;
+      message = error.message;
+    } else {
+      await transaction.rollback();
+    }
+    return {
+      status,
+      message,
+    };
+  }
+};
+
+const obtenerDesendenciaFolder = async (IdObjetos = "", EstaEliminado) => {
+  try {
+    const descendencia = await Objetos.findAll({
+      where: {
+        [Op.and]: [
+          {
+            UbicacionLogica: {
+              [Op.like]: `%${IdObjetos}%`,
+            },
+          },
+          {
+            EstaEliminado,
+          },
+        ],
+      },
+    });
+    // console.log(descendencia);
+    if (!descendencia) {
+      throw new EntidadNoExisteError("No existen registros");
+    }
+
+    return {
+      status: 200,
+      data: {
+        descendencia,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor eliminandoDirectoriosReal";
+    // if (error.code === "ENOTEMPTY") {
+    //   await eliminandoDirectoriosReal(ubicacion);
+    // }
+    if (error instanceof EntidadNoExisteError) {
+      status = 404;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+    };
+  }
+};
+
+const moverObjectoBD = async (
+  Objecto = {},
+  transaction,
+  padre,
+  nuevoPadreLogico,
+  nuevoPadreVista
+) => {
+  if (!transaction) {
+    transaction = await db.transaction();
+  }
+  try {
+    let { IdObjetos, NombreVista, UbicacionLogica, UbicacionVista } = Objecto;
+
+    let separadorUbicacionLogica = UbicacionLogica.split("/");
+    separadorUbicacionLogica = separadorUbicacionLogica.filter(
+      (dato, index) => index != 0
+    );
+    const indexID = separadorUbicacionLogica.indexOf(padre ? padre : IdObjetos);
+    separadorUbicacionLogica = separadorUbicacionLogica.filter(
+      (dato, index) => index >= indexID
+    );
+    let separadorUbicacionVista = UbicacionVista.split("/");
+    separadorUbicacionVista = separadorUbicacionVista.filter(
+      (dato, index) => index != 0
+    );
+    separadorUbicacionVista = separadorUbicacionVista.filter(
+      (dato, index) => index >= indexID
+    );
+    UbicacionLogica =
+      nuevoPadreLogico +
+      separadorUbicacionLogica.reduce(
+        (accumulator, currentValue) => accumulator + "/" + currentValue,
+        ""
+      );
+    UbicacionVista =
+      nuevoPadreVista +
+      separadorUbicacionVista.reduce(
+        (accumulator, currentValue) => accumulator + "/" + currentValue,
+        ""
+      );
+    return {
+      status: 200,
+      // objectoDB,
+      indexID,
+      UbicacionLogica,
+      separadorUbicacionLogica,
+      UbicacionVista,
+      separadorUbicacionVista,
+    };
+    const objectoDB = await Objetos.update(
+      {
+        UbicacionLogica,
+        UbicacionVista,
+        Padre,
+      },
+      {
+        where: {
+          IdObjetos,
+        },
+        transaction,
+      }
+    );
+
+    // await transaction.commit();
+    return {
+      status: 200,
+      objectoDB,
+      indexID,
+      UbicacionLogica,
+      separadorUbicacionLogica,
+      UbicacionVista,
+      separadorUbicacionVista,
+    };
+  } catch (error) {
+    await transaction.rollback();
     console.log(error);
     let status = 500;
     let message = "Error en el servidor eliminandoDirectoriosReal";
@@ -389,4 +625,6 @@ export {
   obtenerElementosDirectorio,
   eliminarDirectorio,
   recuperarDirectorio,
+  obtenerDesendenciaFolder,
+  moverObjectoBD,
 };

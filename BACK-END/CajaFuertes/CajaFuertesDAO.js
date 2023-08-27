@@ -18,35 +18,52 @@ const crearCajaFuerte = async (IdUsuario = "", transaction) => {
       transaction,
     });
     // throw new Error("");
+
+    const datosDirRaiz = {
+        IdObjetos: IdUsuario,
+        IdUsuarios: IdUsuario,
+        NombreVista: "root",
+        UbicacionVista: "/root",
+        UbicacionLogica: `/${IdUsuario}`,
+        Padre: "/",
+        EsDirectorio: true,
+        Mime: "directory",
+        PesoMB: 0,
+        FechaCreacion: new Date(),
+        FechaActualizacion: new Date(),
+        EstaEliminado: false,
+      },
+      datosEliminados = {
+        IdUsuarios: IdUsuario,
+        NombreVista: `Eliminados-${IdUsuario}`,
+        UbicacionVista: "/root",
+        UbicacionLogica: `/${IdUsuario}`,
+        Padre: IdUsuario,
+        EsDirectorio: true,
+        Mime: "directory",
+        PesoMB: 0,
+        FechaCreacion: new Date(),
+        FechaActualizacion: new Date(),
+        EstaEliminado: false,
+      };
+
+    const dicRoot = await crearDirectorio(datosDirRaiz, transaction);
+    const dicEliminados = await crearDirectorio(datosEliminados, transaction);
     const datosDir = {
       IdUsuario,
       IdCajaFuertes: cajaFuerte.IdCajaFuertes,
+      IdEliminado: dicEliminados.data.IdObjetos,
     };
+    console.log(datosDir);
     await crearDirectorioRaiz(datosDir);
 
-    const datosDirRaiz = {
-      IdObjetos: IdUsuario,
-      IdUsuarios: IdUsuario,
-      NombreVista: "root",
-      UbicacionVista: "/root",
-      UbicacionLogica: `/${IdUsuario}`,
-      Padre: "/",
-      EsDirectorio: true,
-      Mime: "directory",
-      PesoMB: 0,
-      FechaCreacion: new Date(),
-      FechaActualizacion: new Date(),
-      EstaEliminado: false,
-    };
-
-    const dicRoot = await crearDirectorio(datosDirRaiz, transaction);
-
-    // await transaction.commit();
+    await transaction.commit();
     return {
       status: 200,
       message: "Caja fuerte creada",
       data: {
         cajaFuerte: cajaFuerte.IdCajaFuertes,
+        datosDir,
       },
     };
   } catch (error) {

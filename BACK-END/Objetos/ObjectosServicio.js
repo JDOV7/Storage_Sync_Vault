@@ -13,8 +13,8 @@ const subiendoArchivosServicio = async (datos = {}) => {
   return respuesta;
 };
 
-const crearDirectorioServicio = async (datos = {}) => {
-  const respuesta = await crearDirectorio(datos);
+const crearDirectorioServicio = async (datos = {}, transaction) => {
+  const respuesta = await crearDirectorio(datos, transaction);
   return respuesta;
 };
 
