@@ -21,8 +21,8 @@ Funcionalidades publicas:
 Funcionalidades privadas( Una vez confirmada la cuenta y haber iniciado sesion ):
 * Creacion de folders
 * Obtener los elementos de los folders
-* Eliminar folders incluyendo su contenido
-* Subir archivos a los folders( En construccion  )
+* Subir archivos a los folders
+* Eliminar folders incluyendo su contenido( En construccion  )
 * Recuperar folders eliminados( En construccion )
 
 </div>

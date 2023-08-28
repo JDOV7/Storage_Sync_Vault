@@ -1,9 +1,9 @@
 import { Op } from "sequelize";
-import { mkdir, rmdir, rm, chmod } from "node:fs/promises";
+import { mkdir, rmdir, rm, chmod, cp } from "node:fs/promises";
+import { rmSync, rmdirSync } from "node:fs";
 import path from "path";
 import { fileURLToPath } from "url";
 // import { removeSync, moveSync } from "fs-extra/esm";
-import fs from "fs-extra";
 
 import db from "../Config/db.js";
 import { Objetos } from "../Models/index.js";
@@ -283,33 +283,32 @@ const eliminarDirectorio = async (datos = {}) => {
     }
     const lugarActual = `${__dirname}../../public/uploads${todosLosObjetos.UbicacionLogica}`;
     const lugarDestino = `${__dirname}../../public/uploads${buscarCarpetaUbicacionEliminados.UbicacionLogica}/${IdObjetos}`;
-    // const mandarADirEliminados = await moverDir(lugarActual, lugarDestino);
 
     const descendencia = await obtenerDesendenciaFolder(IdObjetos, false);
-    console.log(descendencia);
+    // console.log(descendencia);
+    console.log("---------------------MUEVO EL DIR----------------------");
 
-    for (const obje of descendencia.data.descendencia) {
+    for (
+      let index = 0;
+      index < descendencia.data.descendencia.length;
+      index++
+    ) {
+      const objecto = await descendencia.data.descendencia[index];
       const moverObjectoBDUno = await moverObjectoBD(
-        obje,
+        objecto,
         transaction,
         IdObjetos,
         buscarCarpetaUbicacionEliminados.UbicacionLogica,
         buscarCarpetaUbicacionEliminados.UbicacionVista
       );
-      console.log(moverObjectoBDUno);
       if (moverObjectoBDUno.status != 200) {
         throw new EntidadNoExisteError("");
       }
     }
-    return {
-      status: 200,
-      UbicacionLogica: todosLosObjetos.UbicacionLogica,
-      lugarActual,
-      lugarDestino,
-      descendencia,
-    };
-    // moverDir;
-    // console.log(todosLosObjetos.IdObjetos);
+    console.log(
+      "---------------------ACT las ubciaciones----------------------"
+    );
+    // console.log(obtenerCarpetaDestinoEliminados);
     // throw new Error();
 
     const respuestaEliminarCarpeta = await crearCarpetaEliminadaServicio(
@@ -319,6 +318,9 @@ const eliminarDirectorio = async (datos = {}) => {
     if (respuestaEliminarCarpeta.status != 200) {
       throw new EntidadNoCreadaError("No se pudo eliminar la carpeta");
     }
+    console.log(
+      "---------------------crearCarpetaEliminadaServicio----------------------"
+    );
     const eliminarObjectos = await Objetos.update(
       { EstaEliminado: true },
       {
@@ -336,6 +338,37 @@ const eliminarDirectorio = async (datos = {}) => {
         transaction,
       }
     );
+    // console.log("---------------------eliminarObjectos----------------------");
+    // buscarCarpetaUbicacionEliminados.UbicacionLogica =
+    //   buscarCarpetaUbicacionEliminados.UbicacionLogica.substring(1) +
+    //   "/" +
+    //   IdObjetos;
+    // const crearUbicacionMove = await crearDirectorioReal(
+    //   buscarCarpetaUbicacionEliminados.UbicacionLogica
+    // );
+    // if (crearUbicacionMove.status != 200) {
+    //   throw new EntidadNoCreadaError("No se pudo eliminar el directrio");
+    // }
+    console.log(
+      "---------------------crearUbicacionMove----------------------"
+    );
+
+    const moviendoDir = await cp(lugarActual, lugarDestino, {
+      recursive: true,
+    });
+
+    const eliminaDir = await eliminandoDirectoriosReal(
+      todosLosObjetos.UbicacionLogica
+    );
+    // const moviendoDir = await fs.moveSync(lugarActual, lugarDestino, {
+    //   overwrite: true,
+    // });
+    // const mandarADirEliminados = await moverDir(lugarActual, lugarDestino);
+
+    // if (mandarADirEliminados.status != 200) {
+    //   throw new EntidadNoCreadaError("No se pudo eliminar el directrio");
+    // }
+
     // const resEliminarReal = await eliminandoDirectoriosReal(
     //   padre.datos.UbicacionLogica
     // );
@@ -343,9 +376,12 @@ const eliminarDirectorio = async (datos = {}) => {
     //   throw new Error(resEliminarReal.message);
     // }
     await transaction.commit();
+    // await transaction.rollback();
+
     return {
       status: 200,
       message: "Carpeta Eliminada Correctamente",
+      buscarCarpetaUbicacionEliminados,
       // datos: { ...datos, todosLosObjetos, resEliminarReal },
       // datos: { ...datos, eliminarObjectos },
       // datos: { ...datos, todosLosObjetos, respuestaEliminarObjectos },
@@ -375,21 +411,35 @@ const eliminandoDirectoriosReal = async (ubicacion = "") => {
     console.log(
       "------------------eliminandoDirectoriosReal-------------------"
     );
-    console.log(ubicacion);
-    const projectFolder = new URL(
-      `../public/uploads${ubicacion}`,
-      import.meta.url
-    );
-    // try {
-    //   const ubicacionGlobal = `${__dirname}../../public/uploads${ubicacion}/`;
-    //   // throw new Error("");
-    //   const eliminarDir = await removeSync(ubicacionGlobal);
-    // } catch (error) {
-    //   if (error.code === "ENOTEMPTY") {
-    //     await eliminandoDirectoriosReal(ubicacion);
-    //   }
-    // }
 
+    const ubicacionGlobal = `${__dirname}../../public/uploads${ubicacion}`;
+    try {
+      // throw new Error("");
+      // console.log(ubicacionGlobal);
+      const eliminarDir = await rmSync(ubicacionGlobal, {
+        // force: true,
+        recursive: true,
+        // maxRetries: 5,
+        // retryDelay: 200,
+      });
+      // await rm(`${__dirname}../../public/uploads${ubicacion}`, {
+      //   force: true,
+      //   recursive: true,
+      //   maxRetries: 5,
+      //   retryDelay: 200,
+      // });
+    } catch (error) {
+      console.log(error);
+      if (error.code === "ENOTEMPTY") {
+      await eliminandoDirectoriosReal(ubicacion);
+      }
+    }
+    // await rm(`${__dirname}../../public/uploads${ubicacion}`, {
+    //   force: true,
+    //   recursive: true,
+    //   maxRetries: 5,
+    //   retryDelay: 200,
+    // });
     return {
       status: 200,
       // datos: { eliminarDirContenido, eliminarDir },
@@ -531,11 +581,13 @@ const moverObjectoBD = async (
   nuevoPadreLogico,
   nuevoPadreVista
 ) => {
+  // console.log(padre);
   if (!transaction) {
     transaction = await db.transaction();
   }
   try {
-    let { IdObjetos, NombreVista, UbicacionLogica, UbicacionVista } = Objecto;
+    let { IdObjetos, NombreVista, UbicacionLogica, UbicacionVista, Padre } =
+      Objecto;
 
     let separadorUbicacionLogica = UbicacionLogica.split("/");
     separadorUbicacionLogica = separadorUbicacionLogica.filter(
@@ -564,20 +616,22 @@ const moverObjectoBD = async (
         (accumulator, currentValue) => accumulator + "/" + currentValue,
         ""
       );
-    return {
-      status: 200,
-      // objectoDB,
-      indexID,
-      UbicacionLogica,
-      separadorUbicacionLogica,
-      UbicacionVista,
-      separadorUbicacionVista,
-    };
+    // return {
+    //   status: 200,
+    //   // objectoDB,
+    //   indexID,
+    //   UbicacionLogica,
+    //   separadorUbicacionLogica,
+    //   UbicacionVista,
+    //   separadorUbicacionVista,
+    //   Padre: padre == IdObjetos ? nuevoPadreLogico.split("/")[2] : Padre,
+    // };
+    console.log("--------------------ANTES DEL act ubicaciones---------------");
     const objectoDB = await Objetos.update(
       {
         UbicacionLogica,
         UbicacionVista,
-        Padre,
+        Padre: padre == IdObjetos ? nuevoPadreLogico.split("/")[2] : Padre,
       },
       {
         where: {
@@ -586,16 +640,11 @@ const moverObjectoBD = async (
         transaction,
       }
     );
-
+    console.log(objectoDB);
     // await transaction.commit();
     return {
       status: 200,
       objectoDB,
-      indexID,
-      UbicacionLogica,
-      separadorUbicacionLogica,
-      UbicacionVista,
-      separadorUbicacionVista,
     };
   } catch (error) {
     await transaction.rollback();
@@ -605,10 +654,10 @@ const moverObjectoBD = async (
     // if (error.code === "ENOTEMPTY") {
     //   await eliminandoDirectoriosReal(ubicacion);
     // }
-    if (error instanceof EntidadNoExisteError) {
-      status = 404;
-      message = error.message;
-    }
+    // if (error instanceof EntidadNoExisteError) {
+    //   status = 404;
+    //   message = error.message;
+    // }
     return {
       status,
       message,

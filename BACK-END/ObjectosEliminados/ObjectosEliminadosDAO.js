@@ -68,6 +68,7 @@ const crearCarpetaEliminada = async (IdObjetos, transaction) => {
       message: "Carpeta eliminada exitosamente",
     };
   } catch (error) {
+    console.log(error);
     await transaction.rollback();
     let status = 500;
     let message = "Error en el servidor";

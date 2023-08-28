@@ -34,8 +34,16 @@ const obtenerElementosDirectorioServicio = async (datos = {}) => {
 };
 
 const eliminarDirectorioServicio = async (datos = {}) => {
-  const respuesta = await eliminarDirectorio(datos);
-  return respuesta;
+  try {
+    const respuesta = await eliminarDirectorio(datos);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
 };
 
 const recuperarDirectorioServicio = async (datos = {}) => {

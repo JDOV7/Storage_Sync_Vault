@@ -11,6 +11,7 @@ const moverDir = async (lugarActual, lugarDestino) => {
       message: "El directorio se movio exitosamente",
     };
   } catch (error) {
+    console.log(error);
     let status = 500,
       message = "Error al mover el directorio";
     return {

@@ -22,6 +22,7 @@ const crearCarpetaEliminadaServicio = async (id = "", transaction) => {
     const respuesta = await crearCarpetaEliminada(id, transaction);
     return respuesta;
   } catch (error) {
+    console.log(error);
     return {
       status: 500,
       message: error.message,
