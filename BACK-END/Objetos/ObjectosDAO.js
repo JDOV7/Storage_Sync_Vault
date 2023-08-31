@@ -1,9 +1,28 @@
 import { Op } from "sequelize";
-import { mkdir, rmdir, rm, chmod, cp } from "node:fs/promises";
-import { rmSync, rmdirSync } from "node:fs";
+import {
+  mkdir,
+  rmdir,
+  rm,
+  chmod,
+  cp,
+  readdir,
+  unlink,
+  lstat,
+  stat,
+} from "node:fs/promises";
+import {
+  rmSync,
+  rmdirSync,
+  existsSync,
+  lstatSync,
+  readdirSync,
+  unlinkSync,
+  statSync,
+  cpSync,
+} from "node:fs";
 import path from "path";
 import { fileURLToPath } from "url";
-// import { removeSync, moveSync } from "fs-extra/esm";
+import { removeSync, moveSync } from "fs-extra/esm";
 
 import db from "../Config/db.js";
 import { Objetos } from "../Models/index.js";
@@ -338,50 +357,18 @@ const eliminarDirectorio = async (datos = {}) => {
         transaction,
       }
     );
-    // console.log("---------------------eliminarObjectos----------------------");
-    // buscarCarpetaUbicacionEliminados.UbicacionLogica =
-    //   buscarCarpetaUbicacionEliminados.UbicacionLogica.substring(1) +
-    //   "/" +
-    //   IdObjetos;
-    // const crearUbicacionMove = await crearDirectorioReal(
-    //   buscarCarpetaUbicacionEliminados.UbicacionLogica
-    // );
-    // if (crearUbicacionMove.status != 200) {
-    //   throw new EntidadNoCreadaError("No se pudo eliminar el directrio");
-    // }
-    console.log(
-      "---------------------crearUbicacionMove----------------------"
-    );
-
     const moviendoDir = await cp(lugarActual, lugarDestino, {
       recursive: true,
+      force: true,
     });
+    await removeSync(lugarActual);
 
-    const eliminaDir = await eliminandoDirectoriosReal(
-      todosLosObjetos.UbicacionLogica
-    );
-    // const moviendoDir = await fs.moveSync(lugarActual, lugarDestino, {
-    //   overwrite: true,
-    // });
-    // const mandarADirEliminados = await moverDir(lugarActual, lugarDestino);
-
-    // if (mandarADirEliminados.status != 200) {
-    //   throw new EntidadNoCreadaError("No se pudo eliminar el directrio");
-    // }
-
-    // const resEliminarReal = await eliminandoDirectoriosReal(
-    //   padre.datos.UbicacionLogica
-    // );
-    // if (resEliminarReal.status != 200) {
-    //   throw new Error(resEliminarReal.message);
-    // }
     await transaction.commit();
     // await transaction.rollback();
 
     return {
       status: 200,
       message: "Carpeta Eliminada Correctamente",
-      buscarCarpetaUbicacionEliminados,
       // datos: { ...datos, todosLosObjetos, resEliminarReal },
       // datos: { ...datos, eliminarObjectos },
       // datos: { ...datos, todosLosObjetos, respuestaEliminarObjectos },
@@ -413,15 +400,17 @@ const eliminandoDirectoriosReal = async (ubicacion = "") => {
     );
 
     const ubicacionGlobal = `${__dirname}../../public/uploads${ubicacion}`;
+    console.log(ubicacionGlobal);
     try {
-      // throw new Error("");
-      // console.log(ubicacionGlobal);
-      const eliminarDir = await rmSync(ubicacionGlobal, {
-        // force: true,
-        recursive: true,
-        // maxRetries: 5,
-        // retryDelay: 200,
-      });
+      await removeSync(ubicacionGlobal);
+      // await rm(ubicacionGlobal, { recursive: true, force: true });
+      // await rm(ubicacionGlobal, { recursive: true, force: true });
+      // const eliminarDir = await rmSync(ubicacionGlobal, {
+      //   force: true,
+      //   recursive: true,
+      //   // maxRetries: 5,
+      //   // retryDelay: 200,
+      // });
       // await rm(`${__dirname}../../public/uploads${ubicacion}`, {
       //   force: true,
       //   recursive: true,
@@ -430,9 +419,6 @@ const eliminandoDirectoriosReal = async (ubicacion = "") => {
       // });
     } catch (error) {
       console.log(error);
-      if (error.code === "ENOTEMPTY") {
-      await eliminandoDirectoriosReal(ubicacion);
-      }
     }
     // await rm(`${__dirname}../../public/uploads${ubicacion}`, {
     //   force: true,
@@ -460,6 +446,26 @@ const eliminandoDirectoriosReal = async (ubicacion = "") => {
       status,
       message,
     };
+  }
+};
+
+const deleteFolderRecursive = function (path) {
+  if (existsSync(path)) {
+    const files = readdirSync(path);
+
+    if (files.length > 0) {
+      files.forEach(function (filename) {
+        if (statSync(path + "/" + filename).isDirectory()) {
+          deleteFolderRecursive(path + "/" + filename);
+        } else {
+          unlinkSync(path + "/" + filename);
+        }
+      });
+    } else {
+      console.log("No files found in the directory.");
+    }
+  } else {
+    console.log("Directory path not found.");
   }
 };
 
