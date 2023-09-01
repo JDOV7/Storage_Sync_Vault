@@ -22,7 +22,7 @@ Funcionalidades privadas( Una vez confirmada la cuenta y haber iniciado sesion )
 * Creacion de folders
 * Obtener los elementos de los folders
 * Subir archivos a los folders
-* Eliminar folders incluyendo su contenido( Terminado pero en revision  )
+* Eliminar folders incluyendo su contenido
 * Recuperar folders eliminados( En construccion )
 
 </div>

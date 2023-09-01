@@ -471,6 +471,7 @@ const deleteFolderRecursive = function (path) {
 
 const recuperarDirectorio = async (datos = {}) => {
   //TODO: cuando se restaure algun objecto se movera a la carpeta /root
+
   let transaction = await db.transaction();
   try {
     const {
@@ -481,14 +482,31 @@ const recuperarDirectorio = async (datos = {}) => {
     const lugarActual = `${__dirname}../../public/uploads${UbicacionLogica}`;
     const lugarDestino = `${__dirname}../../public/uploads/${IdUsuarios}/${IdObjetos}`;
     // console.log(descendencia);
+    // return {
+    //   status: 200,
+    //   message: "Directorio recuperado",
+    //   data: {
+    //     descendencia,
+    //     // datos,
+    //     // moviendoDir,
+    //   },
+    // };
+
+    const buscarCarpetaUbicacionEliminados =
+      await obtenerCarpetaDestinoEliminados(IdUsuarios);
+    if (!buscarCarpetaUbicacionEliminados) {
+      throw new EntidadNoExisteError("No se pudo eliminar la carpeta");
+    }
     for (const obje of descendencia.data.descendencia) {
       const moverObjectoBDUno = await moverObjectoBD(
         obje,
         transaction,
-        IdObjetos
+        IdObjetos,
+        `${IdUsuarios}/${IdObjetos}`,
+        `/root/${IdUsuarios}`
       );
       if (moverObjectoBDUno.status != 200) {
-        throw new EntidadNoExisteError("");
+        throw new EntidadNoExisteError("No se pudo restaurar el directorio");
       }
     }
 
@@ -500,16 +518,16 @@ const recuperarDirectorio = async (datos = {}) => {
       throw new EntidadNoExisteError("No se pudo restaurar el directorio");
     }
 
-    if (lugarActual != lugarDestino) {
-      const moviendoDir = await fs.move(lugarActual, lugarDestino, {
-        overwrite: true,
-      });
-    }
+    const moviendoDir = await cp(lugarActual, lugarDestino, {
+      recursive: true,
+      force: true,
+    });
+    await removeSync(lugarActual);
 
     await transaction.commit();
     return {
       status: 200,
-      message: "recuperarDirectorio",
+      message: "Directorio recuperado",
       data: {
         // datos,
         // moviendoDir,
@@ -587,7 +605,6 @@ const moverObjectoBD = async (
   nuevoPadreLogico,
   nuevoPadreVista
 ) => {
-  // console.log(padre);
   if (!transaction) {
     transaction = await db.transaction();
   }
@@ -622,6 +639,8 @@ const moverObjectoBD = async (
         (accumulator, currentValue) => accumulator + "/" + currentValue,
         ""
       );
+    console.log(UbicacionLogica);
+    console.log(UbicacionVista);
     // return {
     //   status: 200,
     //   // objectoDB,
