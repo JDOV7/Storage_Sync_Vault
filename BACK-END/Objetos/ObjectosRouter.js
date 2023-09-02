@@ -5,6 +5,7 @@ import {
   obtenerElementosDirectorioController,
   eliminarDirectorioController,
   recuperarDirectorioController,
+  moverFolderController,
 } from "./ObjectosController.js";
 import { subirArchivos } from "../Helpers/Multer.js";
 import ValidarToken from "../Helpers/ValidarToken.js";
@@ -44,6 +45,13 @@ router.put(
   ValidarAunPerteneceAlUsuario,
   validarEsElDirectorioPrincipalEliminado,
   recuperarDirectorioController
+);
+
+router.post(
+  "/folder/mover/:IdObjetos",
+  ValidarToken,
+  ValidarPerteneceAlUsuario,
+  moverFolderController
 );
 
 router.post(

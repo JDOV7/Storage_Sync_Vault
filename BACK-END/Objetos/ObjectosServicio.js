@@ -6,6 +6,7 @@ import {
   obtenerElementosDirectorio,
   eliminarDirectorio,
   recuperarDirectorio,
+  moverFolder,
 } from "./ObjectosDAO.js";
 
 const subiendoArchivosServicio = async (datos = {}) => {
@@ -51,6 +52,19 @@ const recuperarDirectorioServicio = async (datos = {}) => {
   return respuesta;
 };
 
+const moverFolderServicio = async (datos = {}) => {
+  try {
+    const respuesta = await moverFolder(datos);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
 export {
   subiendoArchivosServicio,
   crearDirectorioServicio,
@@ -59,4 +73,5 @@ export {
   obtenerElementosDirectorioServicio,
   eliminarDirectorioServicio,
   recuperarDirectorioServicio,
+  moverFolderServicio,
 };

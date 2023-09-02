@@ -6,6 +6,7 @@ import {
   obtenerElementosDirectorioServicio,
   eliminarDirectorioServicio,
   recuperarDirectorioServicio,
+  moverFolderServicio,
 } from "./ObjectosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 import db from "../Config/db.js";
@@ -156,10 +157,34 @@ const recuperarDirectorioController = async (req, res) => {
   }
 };
 
+const moverFolderController = async (req, res) => {
+  try {
+    // console.log(req.files);
+    // throw new EntidadNoExisteError("No existe el padre");
+    const datos = {
+      padre: req.body.padre,
+    };
+    const respuesta = await moverFolderServicio(datos);
+    if (respuesta.status !== 200) {
+      return res.status(respuesta.status).json({
+        status: respuesta.status,
+        message: respuesta.message,
+      });
+    }
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error.message,
+    });
+  }
+};
+
 export {
   subiendoArchivosController,
   crearDirectorioController,
   obtenerElementosDirectorioController,
   eliminarDirectorioController,
   recuperarDirectorioController,
+  moverFolderController,
 };

@@ -470,8 +470,6 @@ const deleteFolderRecursive = function (path) {
 };
 
 const recuperarDirectorio = async (datos = {}) => {
-  //TODO: cuando se restaure algun objecto se movera a la carpeta /root
-
   let transaction = await db.transaction();
   try {
     const {
@@ -482,32 +480,62 @@ const recuperarDirectorio = async (datos = {}) => {
     const lugarActual = `${__dirname}../../public/uploads${UbicacionLogica}`;
     const lugarDestino = `${__dirname}../../public/uploads/${IdUsuarios}/${IdObjetos}`;
     // console.log(descendencia);
-    // return {
-    //   status: 200,
-    //   message: "Directorio recuperado",
-    //   data: {
-    //     descendencia,
-    //     // datos,
-    //     // moviendoDir,
-    //   },
-    // };
 
     const buscarCarpetaUbicacionEliminados =
       await obtenerCarpetaDestinoEliminados(IdUsuarios);
     if (!buscarCarpetaUbicacionEliminados) {
       throw new EntidadNoExisteError("No se pudo eliminar la carpeta");
     }
+
+    // TODO: LLEGA hasta aqui, checar si funcionan bien UbicacionVista, UbicacionLogica
     for (const obje of descendencia.data.descendencia) {
       const moverObjectoBDUno = await moverObjectoBD(
         obje,
         transaction,
         IdObjetos,
-        `${IdUsuarios}/${IdObjetos}`,
-        `/root/${IdUsuarios}`
+        `/${IdUsuarios}`,
+        `/root`
       );
       if (moverObjectoBDUno.status != 200) {
         throw new EntidadNoExisteError("No se pudo restaurar el directorio");
       }
+    }
+
+    const cambiarEstadoObjectoAExiste = await Objetos.update(
+      { EstaEliminado: false },
+      {
+        where: {
+          [Op.and]: [
+            {
+              UbicacionLogica: {
+                [Op.like]: `%${IdObjetos}%`,
+              },
+            },
+            { IdUsuarios },
+            { EstaEliminado: true },
+          ],
+        },
+        transaction,
+      }
+    );
+
+    if (!cambiarEstadoObjectoAExiste) {
+      throw new EntidadNoExisteError("No se pudo restaurar el directorio");
+    }
+
+    const cambiarPadreAlDirectorioEliminado = await Objetos.update(
+      {
+        Padre: IdUsuarios,
+      },
+      {
+        where: {
+          IdObjetos,
+        },
+        transaction,
+      }
+    );
+    if (!cambiarPadreAlDirectorioEliminado) {
+      throw new EntidadNoExisteError("No se pudo restaurar el directorio");
     }
 
     const resDirDbEliminada = await restaurarDirectorioDBServicio(
@@ -690,6 +718,16 @@ const moverObjectoBD = async (
   }
 };
 
+const moverFolder = async (datos = {}) => {
+  return {
+    status: 200,
+    message: "moverFolder",
+    data: {
+      datos,
+    },
+  };
+};
+
 export {
   subiendoArchivos,
   crearDirectorioRaiz,
@@ -701,4 +739,5 @@ export {
   recuperarDirectorio,
   obtenerDesendenciaFolder,
   moverObjectoBD,
+  moverFolder,
 };
