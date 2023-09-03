@@ -33,6 +33,7 @@ import {
 } from "../ObjectosEliminados/ObjectosEliminadosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 import EntidadNoCreadaError from "../Validadores/Errores/EntidadNoCreadaError.js";
+import OperacionUsuarioNoValidaError from "../Validadores/Errores/OperacionUsuarioNoValidaError.js";
 
 import { moverDir } from "../Helpers/FileSystem.js";
 
@@ -669,6 +670,7 @@ const moverObjectoBD = async (
       );
     console.log(UbicacionLogica);
     console.log(UbicacionVista);
+    console.log(padre == IdObjetos ? nuevoPadreLogico.split("/")[2] : Padre);
     // return {
     //   status: 200,
     //   // objectoDB,
@@ -719,12 +721,125 @@ const moverObjectoBD = async (
 };
 
 const moverFolder = async (datos = {}) => {
+  const transaction = await db.transaction();
+  try {
+    const {
+      Objecto: { datos: datosO },
+      Padre: { datos: datosP },
+    } = datos;
+
+    const descendenciaObjecto = await obtenerDesendenciaFolder(
+      datosO.IdObjetos,
+      false
+    );
+
+    if (!descendenciaObjecto) {
+      throw new EntidadNoExisteError("No existe este directorio");
+    }
+    console.log("-----------Antes de act la bd----------------");
+
+    const elDirectorioDestinoEsSuHijo = await Objetos.findOne({
+      where: {
+        [Op.and]: [
+          {
+            UbicacionLogica: {
+              [Op.like]: `%${datosO.IdObjetos}%`,
+            },
+          },
+          {
+            UbicacionLogica: {
+              [Op.like]: `%${datosP.Padre}`,
+            },
+          },
+        ],
+      },
+    });
+
+    if (elDirectorioDestinoEsSuHijo) {
+      throw new OperacionUsuarioNoValidaError(
+        "El directorio destino es subcarpeta del origen "
+      );
+    }
+
+    for (const obje of descendenciaObjecto.data.descendencia) {
+      const moverObjectoBDUno = await moverObjectoBD(
+        obje,
+        transaction,
+        datosO.IdObjetos,
+        `${datosP.UbicacionLogica}`,
+        `${datosP.UbicacionVista}`
+      );
+      if (moverObjectoBDUno.status != 200) {
+        throw new EntidadNoCreadaError("No se pudo restaurar el directorio");
+      }
+    }
+
+    const nuevoPadreCarpetaOrigen = await Objetos.update(
+      {
+        Padre: datosP.Padre,
+      },
+      {
+        where: {
+          IdObjetos: datosO.IdObjetos,
+        },
+        transaction,
+      }
+    );
+
+    const lugarActual = `${__dirname}../../public/uploads${datosO.UbicacionLogica}/`;
+    const lugarDestino = `${__dirname}../../public/uploads${datosP.UbicacionLogica}/${datosO.IdObjetos}`;
+    console.log(lugarActual);
+    console.log(lugarDestino);
+
+    const moviendoDir = await cp(lugarActual, lugarDestino, {
+      recursive: true,
+      force: true,
+    });
+    await removeSync(lugarActual);
+
+    await transaction.commit();
+    return {
+      status: 200,
+      message: "moverFolder",
+      data: {
+        datosO,
+        descendenciaObjecto,
+        datosP,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (!(error instanceof EntidadNoCreadaError)) {
+      await transaction.rollback();
+    }
+    if (error instanceof EntidadNoCreadaError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof EntidadNoExisteError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 400;
+      message = error.message;
+    }
+
+    return {
+      status,
+      message,
+    };
+  }
+};
+
+const compartirFolderConOtrosUsuariosParaLectura = async (datos = {}) => {
   return {
     status: 200,
-    message: "moverFolder",
-    data: {
-      datos,
-    },
+    message: "compartirFolderConOtrosUsuariosParaLectura",
+    data: { datos },
   };
 };
 
@@ -740,4 +855,5 @@ export {
   obtenerDesendenciaFolder,
   moverObjectoBD,
   moverFolder,
+  compartirFolderConOtrosUsuariosParaLectura,
 };

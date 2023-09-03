@@ -24,12 +24,13 @@ Funcionalidades publicas:
 
 Funcionalidades privadas( Una vez confirmada la cuenta y haber iniciado sesion ):
 
-- Creacion de folders
+- Crear folders
 - Obtener los elementos de los folders
 - Subir archivos a los folders
 - Eliminar folders incluyendo su contenido( archivos y sub-folders )
 - Recuperar folders eliminados( los folders restaurados se mueven al directorio raiz / )
-- Mover folders( en construccion )
+- Mover de lugar los folders
+- Compartir folders con otros usuarios para su lectura( en construccion)
 
 </div>
 
@@ -96,6 +97,23 @@ Para ejecutar el Front-End se debe hacer lo siguiente una vez clonado el reposit
 $ cd ../path/to/the/dir/FRONT-END
 $ npm install
 $ npm run dev
+```
+
+
+<p align="justify">
+
+El backend de este proyecto requiere las siguientes ```variables de entorno```:
+
+</p>
+
+```
+PORT=
+DB_HOST=
+DB_NAME=
+DB_USER=
+DB_PASS=
+JWT_SECRET=
+
 ```
 
 <p align="justify">

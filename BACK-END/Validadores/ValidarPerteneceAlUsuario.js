@@ -115,6 +115,39 @@ const validarEsElDirectorioPrincipalEliminado = async (req, res, next) => {
   }
 };
 
+const ValidarPerteneceAlUsuarioParams = async (req, res, next) => {
+  try {
+    console.log("ValidarPerteneceAlUsuario");
+    const { IdUsuarios } = req.usuario;
+    let directorio = undefined;
+    if (!directorio && req.params?.IdObjetos) {
+      directorio = req.params.IdObjetos;
+    }
+    console.log(directorio);
+    // const { Padre } = req.body;
+    const padre = await obtenerDatosPadreServicio(directorio, false);
+    if (!padre || padre.datos?.IdUsuarios != IdUsuarios) {
+      console.log("---------------------No existe---------------");
+      throw new EntidadNoExisteError("Este directorio no existe");
+    }
+    console.log(padre);
+    req.body.paramsObjecto = padre;
+    return next();
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof EntidadNoExisteError) {
+      status = 404;
+      message = error.message;
+    }
+    return res.status(status).json({
+      status,
+      message,
+    });
+  }
+};
+
 const ValidarPerteneceAlUsuarioHeader = async (req, res, next) => {
   try {
     const { IdUsuarios } = req.usuario;
@@ -146,4 +179,5 @@ export {
   ValidarAunPerteneceAlUsuario,
   validarEsElDirectorioPrincipalEliminado,
   ValidarPerteneceAlUsuarioHeader,
+  ValidarPerteneceAlUsuarioParams,
 };

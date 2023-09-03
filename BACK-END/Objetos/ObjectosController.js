@@ -7,6 +7,7 @@ import {
   eliminarDirectorioServicio,
   recuperarDirectorioServicio,
   moverFolderServicio,
+  compartirFolderConOtrosUsuariosParaLecturaServicio,
 } from "./ObjectosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 import db from "../Config/db.js";
@@ -161,10 +162,41 @@ const moverFolderController = async (req, res) => {
   try {
     // console.log(req.files);
     // throw new EntidadNoExisteError("No existe el padre");
+    req.body.paramsObjecto.datos.IdObjetos = req.params.IdObjetos;
+    req.body.padre.datos.Padre = req.body.Padre;
     const datos = {
-      padre: req.body.padre,
+      Objecto: req.body.paramsObjecto,
+      Padre: req.body.padre,
     };
     const respuesta = await moverFolderServicio(datos);
+    if (respuesta.status !== 200) {
+      return res.status(respuesta.status).json({
+        status: respuesta.status,
+        message: respuesta.message,
+      });
+    }
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error.message,
+    });
+  }
+};
+
+const compartirFolderConOtrosUsuariosParaLecturaController = async (
+  req,
+  res
+) => {
+  try {
+    // console.log(req.files);
+    const datos = {
+      folder: req.params.IdObjetos,
+      body: req.body,
+    };
+    const respuesta = await compartirFolderConOtrosUsuariosParaLecturaServicio(
+      datos
+    );
     if (respuesta.status !== 200) {
       return res.status(respuesta.status).json({
         status: respuesta.status,
@@ -187,4 +219,5 @@ export {
   eliminarDirectorioController,
   recuperarDirectorioController,
   moverFolderController,
+  compartirFolderConOtrosUsuariosParaLecturaController,
 };
