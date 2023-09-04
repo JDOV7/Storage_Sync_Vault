@@ -16,21 +16,22 @@ Storage Sync Vault es un servicio similar a Mega o Dropbox, el cual permite alma
 
 <div align="justify">
 
-Funcionalidades publicas:
+🔓**Funcionalidades publicas:**
 
 - Crear cuenta
-- Confirmar cuenta por medio de un token enviado al email( Pendiente el envio del email )
+- Confirmar cuenta por medio de un token enviado al email( _Pendiente el envio del email_ )
 - Inicio de sesion
 
-Funcionalidades privadas( Una vez confirmada la cuenta y haber iniciado sesion ):
+🔐**Funcionalidades privadas( _Una vez confirmada la cuenta y haber iniciado sesion_ )**:
 
 - Crear folders
 - Obtener los elementos de los folders
-- Subir archivos a los folders
-- Eliminar folders incluyendo su contenido( archivos y sub-folders )
-- Recuperar folders eliminados( los folders restaurados se mueven al directorio raiz / )
+- Eliminar folders incluyendo su contenido( _Archivos y sub-folders_ )
+- Recuperar folders eliminados( _Los folders restaurados se mueven al directorio raiz /_ )
 - Mover de lugar los folders
-- Compartir folders con otros usuarios para su lectura( en construccion)
+- Compartir folders con otros usuarios para su lectura
+- Subir archivos a los folders
+- Obtener informacion archivos ( 🚧 _En construccion_ )
 
 </div>
 
@@ -50,23 +51,23 @@ Funcionalidades privadas( Una vez confirmada la cuenta y haber iniciado sesion )
 
 </div>
 
-Principales tecnologias usadas para el Back-End:
+🧠**Principales tecnologias usadas para el Back-End:**
 
-- NodeJS: Version 18.14.2
-- Express: Version 4.18.2
-- Sequelize: Version 6.32.1
-- Multer: Version 1.4.5-lts.1
-- JWT: Version 9.0.1
+- **NodeJS**: Version 18.14.2
+- **Express**: Version 4.18.2
+- **Sequelize**: Version 6.32.1
+- **Multer**: Version 1.4.5-lts.1
+- **JWT**: Version 9.0.1
 
-Principales tecnologias usadas para el Front-End:
+🎨**Principales tecnologias usadas para el Front-End:**
 
-Bases de datos:
+💾**Bases de datos**:
 
-- MySQL: Version *
+- **MySQL**: Version *
 
-Cloud:
+☁️**Cloud**:
 
-- AWS RDS
+- **AWS RDS**
 
 ## 🛠️ Instalacion
 
@@ -74,11 +75,11 @@ Cloud:
 
 <p align="justify">
 
-Para la instalacion, primero se debe tener instalado ```node 18.14.2``` y luego seguir los pasos siguientes.
+Para la instalacion, debe de contar con ```node 18.14.2``` y luego seguir los pasos siguientes.
 
 La aplicacion esta dividida en 2 proyectos, una API Rest y un Front-End.
 
-Para ejecutar el Back-End se debe hacer lo siguiente:
+📂 Para ejecutar el Back-End debe hacer lo siguiente:
 
 </p>
 
@@ -90,19 +91,8 @@ $ npm run dev
 ```
 
 <p align="justify">
-Para ejecutar el Front-End se debe hacer lo siguiente una vez clonado el repositorio:
-</p>
 
-```
-$ cd ../path/to/the/dir/FRONT-END
-$ npm install
-$ npm run dev
-```
-
-
-<p align="justify">
-
-El backend de este proyecto requiere las siguientes ```variables de entorno```:
+🔑El back-end requiere las siguientes ```variables de entorno```:
 
 </p>
 
@@ -113,8 +103,19 @@ DB_NAME=
 DB_USER=
 DB_PASS=
 JWT_SECRET=
+```
+
+
+<p align="justify">
+📂Para ejecutar el Front-End se debe hacer lo siguiente una vez clonado el repositorio:
+</p>
 
 ```
+$ cd ../path/to/the/dir/FRONT-END
+$ npm install
+$ npm run dev
+```
+
 
 <p align="justify">
 Ademas de esto se debe tener una base de datos en MySQL y tener una cuenta en mailtrap para probar los correos.

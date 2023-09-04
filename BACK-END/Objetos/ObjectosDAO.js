@@ -835,12 +835,40 @@ const moverFolder = async (datos = {}) => {
   }
 };
 
-const compartirFolderConOtrosUsuariosParaLectura = async (datos = {}) => {
-  return {
-    status: 200,
-    message: "compartirFolderConOtrosUsuariosParaLectura",
-    data: { datos },
-  };
+const obtenerInformacionArchivo = async (IdObjetos = "") => {
+  try {
+    return {
+      status: 200,
+      message: "obtenerInformacionArchivo",
+      data: { IdObjetos },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (!(error instanceof EntidadNoCreadaError)) {
+      await transaction.rollback();
+    }
+    if (error instanceof EntidadNoCreadaError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof EntidadNoExisteError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 400;
+      message = error.message;
+    }
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
 };
 
 export {
@@ -855,5 +883,5 @@ export {
   obtenerDesendenciaFolder,
   moverObjectoBD,
   moverFolder,
-  compartirFolderConOtrosUsuariosParaLectura,
+  obtenerInformacionArchivo,
 };

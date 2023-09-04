@@ -4,7 +4,7 @@ import db from "../Config/db.js";
 const ObjetosCompartidos = db.define(
   "ObjetosCompartidos",
   {
-    IdObjetosEliminados: {
+    IdObjetosCompartidos: {
       type: DataTypes.UUID,
       primaryKey: true,
       allowNull: false,

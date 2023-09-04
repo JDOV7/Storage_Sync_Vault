@@ -7,7 +7,7 @@ import {
   eliminarDirectorio,
   recuperarDirectorio,
   moverFolder,
-  compartirFolderConOtrosUsuariosParaLectura,
+  obtenerInformacionArchivo,
 } from "./ObjectosDAO.js";
 
 const subiendoArchivosServicio = async (datos = {}) => {
@@ -66,11 +66,9 @@ const moverFolderServicio = async (datos = {}) => {
   }
 };
 
-const compartirFolderConOtrosUsuariosParaLecturaServicio = async (
-  datos = {}
-) => {
+const obtenerInformacionArchivoServicio = async (IdObjetos = "") => {
   try {
-    const respuesta = await compartirFolderConOtrosUsuariosParaLectura(datos);
+    const respuesta = await obtenerInformacionArchivo(IdObjetos);
     return respuesta;
   } catch (error) {
     console.log(error);
@@ -90,5 +88,5 @@ export {
   eliminarDirectorioServicio,
   recuperarDirectorioServicio,
   moverFolderServicio,
-  compartirFolderConOtrosUsuariosParaLecturaServicio,
+  obtenerInformacionArchivoServicio,
 };

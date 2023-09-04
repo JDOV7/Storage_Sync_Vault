@@ -6,7 +6,7 @@ import {
   eliminarDirectorioController,
   recuperarDirectorioController,
   moverFolderController,
-  compartirFolderConOtrosUsuariosParaLecturaController,
+  obtenerInformacionArchivoController,
 } from "./ObjectosController.js";
 import { subirArchivos } from "../Helpers/Multer.js";
 import ValidarToken from "../Helpers/ValidarToken.js";
@@ -58,19 +58,18 @@ router.post(
 );
 
 router.post(
-  "/folder/compartir/:IdObjetos",
-  ValidarToken,
-  ValidarPerteneceAlUsuarioParams,
-  compartirFolderConOtrosUsuariosParaLecturaController
-);
-
-router.post(
   "/archivos",
   ValidarToken,
   // ValidarPerteneceAlUsuarioHeader,
   ValidarPerteneceAlUsuario,
   subirArchivos,
   subiendoArchivosController
+);
+
+router.get(
+  "/archivos/:IdObjetos",
+  ValidarToken,
+  obtenerInformacionArchivoController
 );
 
 export default router;

@@ -7,7 +7,7 @@ import {
   eliminarDirectorioServicio,
   recuperarDirectorioServicio,
   moverFolderServicio,
-  compartirFolderConOtrosUsuariosParaLecturaServicio,
+  obtenerInformacionArchivoServicio,
 } from "./ObjectosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 import db from "../Config/db.js";
@@ -184,30 +184,20 @@ const moverFolderController = async (req, res) => {
   }
 };
 
-const compartirFolderConOtrosUsuariosParaLecturaController = async (
-  req,
-  res
-) => {
+const obtenerInformacionArchivoController = async (req, res) => {
   try {
-    // console.log(req.files);
-    const datos = {
-      folder: req.params.IdObjetos,
-      body: req.body,
-    };
-    const respuesta = await compartirFolderConOtrosUsuariosParaLecturaServicio(
-      datos
+    const respuesta = await obtenerInformacionArchivoServicio(
+      req.params.IdObjetos
     );
     if (respuesta.status !== 200) {
-      return res.status(respuesta.status).json({
-        status: respuesta.status,
-        message: respuesta.message,
-      });
+      return res.status(respuesta.status).json(respuesta);
     }
     return res.status(200).json(respuesta);
   } catch (error) {
     return res.status(500).json({
       status: 500,
       message: error.message,
+      data: {},
     });
   }
 };
@@ -219,5 +209,5 @@ export {
   eliminarDirectorioController,
   recuperarDirectorioController,
   moverFolderController,
-  compartirFolderConOtrosUsuariosParaLecturaController,
+  obtenerInformacionArchivoController,
 };
