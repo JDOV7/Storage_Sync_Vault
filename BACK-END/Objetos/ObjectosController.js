@@ -8,6 +8,7 @@ import {
   recuperarDirectorioServicio,
   moverFolderServicio,
   obtenerInformacionArchivoServicio,
+  eliminarArchivoServicio,
 } from "./ObjectosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 import db from "../Config/db.js";
@@ -202,6 +203,22 @@ const obtenerInformacionArchivoController = async (req, res) => {
   }
 };
 
+const eliminarArchivoController = async (req, res) => {
+  try {
+    const respuesta = await eliminarArchivoServicio(req.params.IdObjetos);
+    if (respuesta.status !== 200) {
+      return res.status(respuesta.status).json(respuesta);
+    }
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error.message,
+      data: {},
+    });
+  }
+};
+
 export {
   subiendoArchivosController,
   crearDirectorioController,
@@ -210,4 +227,5 @@ export {
   recuperarDirectorioController,
   moverFolderController,
   obtenerInformacionArchivoController,
+  eliminarArchivoController,
 };

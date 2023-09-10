@@ -8,6 +8,10 @@ import {
   recuperarDirectorio,
   moverFolder,
   obtenerInformacionArchivo,
+  eliminarArchivo,
+  archivoExiste,
+  archivoPerteneceAlUsuario,
+  ArchivoNoEliminado,
 } from "./ObjectosDAO.js";
 
 const subiendoArchivosServicio = async (datos = {}) => {
@@ -79,6 +83,61 @@ const obtenerInformacionArchivoServicio = async (IdObjetos = "") => {
   }
 };
 
+const eliminarArchivoServicio = async (IdObjetos = "") => {
+  try {
+    const respuesta = await eliminarArchivo(IdObjetos);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
+const archivoExisteServicio = async (IdObjetos = "") => {
+  try {
+    const respuesta = await archivoExiste(IdObjetos);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
+const archivoPerteneceAlUsuarioServicio = async (
+  IdObjetos = "",
+  IdUsuarios = ""
+) => {
+  try {
+    const respuesta = await archivoPerteneceAlUsuario(IdObjetos, IdUsuarios);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
+const ArchivoNoEliminadoServicio = async (IdObjetos = "") => {
+  try {
+    const respuesta = await ArchivoNoEliminado(IdObjetos);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
 export {
   subiendoArchivosServicio,
   crearDirectorioServicio,
@@ -89,4 +148,8 @@ export {
   recuperarDirectorioServicio,
   moverFolderServicio,
   obtenerInformacionArchivoServicio,
+  eliminarArchivoServicio,
+  archivoExisteServicio,
+  archivoPerteneceAlUsuarioServicio,
+  ArchivoNoEliminadoServicio,
 };

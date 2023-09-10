@@ -31,7 +31,8 @@ Storage Sync Vault es un servicio similar a Mega o Dropbox, el cual permite alma
 - Mover de lugar los folders
 - Compartir folders con otros usuarios para su lectura
 - Subir archivos a los folders
-- Obtener informacion archivos ( 🚧 _En construccion_ )
+- Obtener informacion de un archivo
+- Eliminar archivo ( 🚧 _En construccion_ )
 
 </div>
 
@@ -85,7 +86,7 @@ La aplicacion esta dividida en 2 proyectos, una API Rest y un Front-End.
 
 ```
 $ git clone https://github.com/JDOV7/Storage_Sync_Vault.git
-$ cd ../path/to/the/dir/BACK-END
+$ cd ../path/to/the/dir/StorageSyncVault/BACK-END
 $ npm install
 $ npm run dev
 ```
@@ -111,7 +112,7 @@ JWT_SECRET=
 </p>
 
 ```
-$ cd ../path/to/the/dir/FRONT-END
+$ cd ../path/to/the/dir/StorageSyncVault/FRONT-END
 $ npm install
 $ npm run dev
 ```

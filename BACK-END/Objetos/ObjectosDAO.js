@@ -837,10 +837,22 @@ const moverFolder = async (datos = {}) => {
 
 const obtenerInformacionArchivo = async (IdObjetos = "") => {
   try {
+    const archivo = await Objetos.findByPk(IdObjetos, {
+      attributes: [
+        "NombreVista",
+        "UbicacionVista",
+        "UbicacionLogica",
+        "PesoMB",
+        "Mime",
+        "FechaCreacion",
+        "FechaActualizacion",
+      ],
+    });
+
     return {
       status: 200,
-      message: "obtenerInformacionArchivo",
-      data: { IdObjetos },
+      message: "Archivo ",
+      data: { archivo },
     };
   } catch (error) {
     console.log(error);
@@ -849,6 +861,249 @@ const obtenerInformacionArchivo = async (IdObjetos = "") => {
 
     if (!(error instanceof EntidadNoCreadaError)) {
       await transaction.rollback();
+    }
+    if (error instanceof EntidadNoCreadaError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof EntidadNoExisteError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 400;
+      message = error.message;
+    }
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const archivoExiste = async (IdObjetos = "") => {
+  try {
+    const archivo = await Objetos.findByPk(IdObjetos);
+    if (!archivo) {
+      throw new EntidadNoExisteError("El archivo no existe");
+    }
+
+    if (archivo.EsDirectorio) {
+      throw new EntidadNoExisteError("El archivo no existe");
+    }
+
+    return { status: 200, message: "Archivo", data: { archivo } };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (!(error instanceof EntidadNoCreadaError)) {
+    }
+    if (error instanceof EntidadNoCreadaError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof EntidadNoExisteError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 400;
+      message = error.message;
+    }
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const eliminarArchivo = async (datos = "") => {
+  return {
+    status: 200,
+    message: "eliminarArchivo",
+    data: { datos },
+  };
+  const transaction = await db.transaction();
+  try {
+    const { padre, IdObjetos, IdUsuarios } = datos;
+    const todosLosObjetos = await Objetos.findOne({
+      where: {
+        [Op.and]: [
+          {
+            UbicacionLogica: {
+              [Op.like]: `%${IdObjetos}`,
+            },
+          },
+          { IdUsuarios },
+          { EstaEliminado: false },
+        ],
+      },
+      attributes: ["IdObjetos", "UbicacionLogica"],
+    });
+    if (!todosLosObjetos) {
+      throw new EntidadNoCreadaError("No se pudo eliminar la carpeta");
+    }
+    const buscarCarpetaUbicacionEliminados =
+      await obtenerCarpetaDestinoEliminados(IdUsuarios);
+    if (!buscarCarpetaUbicacionEliminados) {
+      throw new EntidadNoExisteError("No se pudo eliminar la carpeta");
+    }
+    const lugarActual = `${__dirname}../../public/uploads${todosLosObjetos.UbicacionLogica}`;
+    const lugarDestino = `${__dirname}../../public/uploads${buscarCarpetaUbicacionEliminados.UbicacionLogica}/${IdObjetos}`;
+
+    const descendencia = await obtenerDesendenciaFolder(IdObjetos, false);
+    // console.log(descendencia);
+    console.log("---------------------MUEVO EL DIR----------------------");
+
+    for (
+      let index = 0;
+      index < descendencia.data.descendencia.length;
+      index++
+    ) {
+      const objecto = await descendencia.data.descendencia[index];
+      const moverObjectoBDUno = await moverObjectoBD(
+        objecto,
+        transaction,
+        IdObjetos,
+        buscarCarpetaUbicacionEliminados.UbicacionLogica,
+        buscarCarpetaUbicacionEliminados.UbicacionVista
+      );
+      if (moverObjectoBDUno.status != 200) {
+        throw new EntidadNoExisteError("");
+      }
+    }
+    console.log(
+      "---------------------ACT las ubciaciones----------------------"
+    );
+    // console.log(obtenerCarpetaDestinoEliminados);
+    // throw new Error();
+
+    const respuestaEliminarCarpeta = await crearCarpetaEliminadaServicio(
+      todosLosObjetos.IdObjetos,
+      transaction
+    );
+    if (respuestaEliminarCarpeta.status != 200) {
+      throw new EntidadNoCreadaError("No se pudo eliminar la carpeta");
+    }
+    console.log(
+      "---------------------crearCarpetaEliminadaServicio----------------------"
+    );
+    const eliminarObjectos = await Objetos.update(
+      { EstaEliminado: true },
+      {
+        where: {
+          [Op.and]: [
+            {
+              UbicacionLogica: {
+                [Op.like]: `%${IdObjetos}%`,
+              },
+            },
+            { IdUsuarios },
+            { EstaEliminado: false },
+          ],
+        },
+        transaction,
+      }
+    );
+    const moviendoDir = await cp(lugarActual, lugarDestino, {
+      recursive: true,
+      force: true,
+    });
+    await removeSync(lugarActual);
+
+    await transaction.commit();
+    // await transaction.rollback();
+
+    return {
+      status: 200,
+      message: "Carpeta Eliminada Correctamente",
+      // datos: { ...datos, todosLosObjetos, resEliminarReal },
+      // datos: { ...datos, eliminarObjectos },
+      // datos: { ...datos, todosLosObjetos, respuestaEliminarObjectos },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof EntidadNoExisteError) {
+      status = 404;
+      message = error.message;
+    } else if (error instanceof EntidadNoCreadaError) {
+      status = 404;
+      message = error.message;
+    } else {
+      await transaction.rollback();
+    }
+    return {
+      status,
+      message,
+    };
+  }
+};
+
+const archivoPerteneceAlUsuario = async (IdObjetos = "", IdUsuarios = "") => {
+  try {
+    const archivo = await Objetos.findByPk(IdObjetos);
+    if (!archivo) {
+      throw new EntidadNoExisteError("El archivo no existe");
+    }
+    if (archivo.EsDirectorio) {
+      throw new EntidadNoExisteError("No es un archivo");
+    }
+    if (archivo.IdUsuarios !== IdUsuarios) {
+      throw new EntidadNoExisteError("El archivo no pertenece al usuario");
+    }
+    return { status: 200, message: "Archivo pertenece", data: { archivo } };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (!(error instanceof EntidadNoCreadaError)) {
+    }
+    if (error instanceof EntidadNoCreadaError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof EntidadNoExisteError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 400;
+      message = error.message;
+    }
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const ArchivoNoEliminado = async (IdObjetos = "") => {
+  try {
+    const archivo = await Objetos.findByPk(IdObjetos);
+    if (!archivo) {
+      throw new EntidadNoExisteError("El archivo no existe");
+    }
+    if (archivo.EstaEliminado) {
+      throw new EntidadNoExisteError("El archivo esta eliminado");
+    }
+    return { status: 200, message: "Archivo existe", data: { archivo } };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (!(error instanceof EntidadNoCreadaError)) {
     }
     if (error instanceof EntidadNoCreadaError) {
       status = 400;
@@ -884,4 +1139,8 @@ export {
   moverObjectoBD,
   moverFolder,
   obtenerInformacionArchivo,
+  eliminarArchivo,
+  archivoExiste,
+  archivoPerteneceAlUsuario,
+  ArchivoNoEliminado,
 };
