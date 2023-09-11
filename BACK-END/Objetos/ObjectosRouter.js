@@ -9,6 +9,9 @@ import {
   obtenerInformacionArchivoController,
   eliminarArchivoController,
 } from "./ObjectosController.js";
+
+import { recuperarArchivoController } from "../ObjectosEliminados/ObjectosEliminadosController.js";
+
 import { subirArchivos } from "../Helpers/Multer.js";
 import ValidarToken from "../Helpers/ValidarToken.js";
 import {
@@ -20,6 +23,7 @@ import {
 import ArchivoExiste from "../Validadores/ArchivoExiste.js";
 import ArchivoPerteneceAlUsuario from "../Validadores/ArchivoPerteneceAlUsuario.js";
 import ArchivoNoEliminado from "../Validadores/ArchivoNoEliminado.js";
+import ArchivoEliminado from "../Validadores/ArchivoEliminado.js";
 
 const router = express.Router();
 
@@ -86,6 +90,15 @@ router.delete(
   ArchivoNoEliminado,
   ArchivoPerteneceAlUsuario,
   eliminarArchivoController
+);
+
+router.put(
+  "/archivos/:IdObjetos",
+  ValidarToken,
+  ArchivoExiste,
+  ArchivoEliminado,
+  ArchivoPerteneceAlUsuario,
+  recuperarArchivoController
 );
 
 export default router;

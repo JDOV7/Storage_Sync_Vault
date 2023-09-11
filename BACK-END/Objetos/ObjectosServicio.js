@@ -11,7 +11,7 @@ import {
   eliminarArchivo,
   archivoExiste,
   archivoPerteneceAlUsuario,
-  ArchivoNoEliminado,
+  archivoNoEliminado,
 } from "./ObjectosDAO.js";
 
 const subiendoArchivosServicio = async (datos = {}) => {
@@ -83,9 +83,9 @@ const obtenerInformacionArchivoServicio = async (IdObjetos = "") => {
   }
 };
 
-const eliminarArchivoServicio = async (IdObjetos = "") => {
+const eliminarArchivoServicio = async (IdObjetos = "", IdUsuarios = "") => {
   try {
-    const respuesta = await eliminarArchivo(IdObjetos);
+    const respuesta = await eliminarArchivo(IdObjetos, IdUsuarios);
     return respuesta;
   } catch (error) {
     console.log(error);
@@ -125,9 +125,9 @@ const archivoPerteneceAlUsuarioServicio = async (
   }
 };
 
-const ArchivoNoEliminadoServicio = async (IdObjetos = "") => {
+const archivoNoEliminadoServicio = async (IdObjetos = "") => {
   try {
-    const respuesta = await ArchivoNoEliminado(IdObjetos);
+    const respuesta = await archivoNoEliminado(IdObjetos);
     return respuesta;
   } catch (error) {
     console.log(error);
@@ -151,5 +151,5 @@ export {
   eliminarArchivoServicio,
   archivoExisteServicio,
   archivoPerteneceAlUsuarioServicio,
-  ArchivoNoEliminadoServicio,
+  archivoNoEliminadoServicio,
 };

@@ -205,7 +205,11 @@ const obtenerInformacionArchivoController = async (req, res) => {
 
 const eliminarArchivoController = async (req, res) => {
   try {
-    const respuesta = await eliminarArchivoServicio(req.params.IdObjetos);
+    const {
+      params: { IdObjetos },
+      usuario: { IdUsuarios },
+    } = req;
+    const respuesta = await eliminarArchivoServicio(IdObjetos, IdUsuarios);
     if (respuesta.status !== 200) {
       return res.status(respuesta.status).json(respuesta);
     }

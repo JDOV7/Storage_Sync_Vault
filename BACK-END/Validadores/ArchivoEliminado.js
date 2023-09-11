@@ -1,20 +1,21 @@
-import { archivoNoEliminadoServicio } from "../Objetos/ObjectosServicio.js";
+import { archivoEliminadoServicio } from "../ObjectosEliminados/ObjectosEliminadosServicio.js";
 import EntidadNoExisteError from "./Errores/EntidadNoExisteError.js";
 
-const ArchivoNoEliminado = async (req, res, next) => {
+const ArchivoEliminado = async (req, res, next) => {
   try {
     const {
       params: { IdObjetos },
     } = req;
     console.log(IdObjetos);
-    const ArchivoNoEliminadoServicioRespuesta =
-      await archivoNoEliminadoServicio(IdObjetos);
-    console.log(ArchivoNoEliminadoServicioRespuesta);
+    const ArchivoEliminadoServicioRespuesta = await archivoEliminadoServicio(
+      IdObjetos
+    );
+    console.log(ArchivoEliminadoServicioRespuesta);
     if (
-      !ArchivoNoEliminadoServicioRespuesta ||
-      ArchivoNoEliminadoServicioRespuesta.status != 200
+      !ArchivoEliminadoServicioRespuesta ||
+      ArchivoEliminadoServicioRespuesta.status != 200
     ) {
-      throw new EntidadNoExisteError("Este Archivo esta eliminado");
+      throw new EntidadNoExisteError("Este Archivo no esta eliminado");
     }
     return next();
   } catch (error) {
@@ -33,4 +34,4 @@ const ArchivoNoEliminado = async (req, res, next) => {
     });
   }
 };
-export default ArchivoNoEliminado;
+export default ArchivoEliminado;

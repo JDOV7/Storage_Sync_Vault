@@ -1,24 +1,26 @@
 import { Op } from "sequelize";
 import {
   mkdir,
-  rmdir,
+  // rmdir,
   rm,
   chmod,
   cp,
-  readdir,
-  unlink,
-  lstat,
-  stat,
+  copyFile,
+  // readdir,
+  // unlink,
+  // lstat,
+  // stat,
+  constants,
 } from "node:fs/promises";
 import {
-  rmSync,
-  rmdirSync,
+  // rmSync,
+  // rmdirSync,
   existsSync,
-  lstatSync,
+  // lstatSync,
   readdirSync,
   unlinkSync,
   statSync,
-  cpSync,
+  // cpSync,
 } from "node:fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -670,6 +672,7 @@ const moverObjectoBD = async (
       );
     console.log(UbicacionLogica);
     console.log(UbicacionVista);
+    console.log(nuevoPadreLogico);
     console.log(padre == IdObjetos ? nuevoPadreLogico.split("/")[2] : Padre);
     // return {
     //   status: 200,
@@ -923,16 +926,10 @@ const archivoExiste = async (IdObjetos = "") => {
   }
 };
 
-const eliminarArchivo = async (datos = "") => {
-  return {
-    status: 200,
-    message: "eliminarArchivo",
-    data: { datos },
-  };
+const eliminarArchivo = async (IdObjetos = "", IdUsuarios = "") => {
   const transaction = await db.transaction();
   try {
-    const { padre, IdObjetos, IdUsuarios } = datos;
-    const todosLosObjetos = await Objetos.findOne({
+    const archivo = await Objetos.findOne({
       where: {
         [Op.and]: [
           {
@@ -944,64 +941,63 @@ const eliminarArchivo = async (datos = "") => {
           { EstaEliminado: false },
         ],
       },
-      attributes: ["IdObjetos", "UbicacionLogica"],
+      // attributes: ["IdObjetos", "UbicacionLogica"],
     });
-    if (!todosLosObjetos) {
-      throw new EntidadNoCreadaError("No se pudo eliminar la carpeta");
+    if (!archivo) {
+      throw new EntidadNoExisteError("No existe este archivo");
     }
+
     const buscarCarpetaUbicacionEliminados =
       await obtenerCarpetaDestinoEliminados(IdUsuarios);
     if (!buscarCarpetaUbicacionEliminados) {
       throw new EntidadNoExisteError("No se pudo eliminar la carpeta");
     }
-    const lugarActual = `${__dirname}../../public/uploads${todosLosObjetos.UbicacionLogica}`;
-    const lugarDestino = `${__dirname}../../public/uploads${buscarCarpetaUbicacionEliminados.UbicacionLogica}/${IdObjetos}`;
+    const extencion =
+      archivo.NombreVista.split(".")[archivo.NombreVista.split(".").length - 1];
+    const lugarActual = `${__dirname}../../public/uploads${archivo.UbicacionLogica}.${extencion}`;
+    const lugarDestino = `${__dirname}../../public/uploads${buscarCarpetaUbicacionEliminados.UbicacionLogica}/${IdObjetos}.${extencion}`;
 
-    const descendencia = await obtenerDesendenciaFolder(IdObjetos, false);
     // console.log(descendencia);
-    console.log("---------------------MUEVO EL DIR----------------------");
+    console.log("---------------------MUEVO EL Archivo----------------------");
 
-    for (
-      let index = 0;
-      index < descendencia.data.descendencia.length;
-      index++
-    ) {
-      const objecto = await descendencia.data.descendencia[index];
-      const moverObjectoBDUno = await moverObjectoBD(
-        objecto,
-        transaction,
-        IdObjetos,
-        buscarCarpetaUbicacionEliminados.UbicacionLogica,
-        buscarCarpetaUbicacionEliminados.UbicacionVista
-      );
-      if (moverObjectoBDUno.status != 200) {
-        throw new EntidadNoExisteError("");
-      }
+    const objecto = archivo;
+    const moverObjectoBDUno = await moverObjectoBD(
+      objecto,
+      transaction,
+      IdObjetos,
+      buscarCarpetaUbicacionEliminados.UbicacionLogica,
+      buscarCarpetaUbicacionEliminados.UbicacionVista
+    );
+    if (moverObjectoBDUno.status != 200) {
+      throw new OperacionUsuarioNoValidaError("No se pudo eliminar el archivo");
     }
+
     console.log(
       "---------------------ACT las ubciaciones----------------------"
     );
+
     // console.log(obtenerCarpetaDestinoEliminados);
     // throw new Error();
 
-    const respuestaEliminarCarpeta = await crearCarpetaEliminadaServicio(
-      todosLosObjetos.IdObjetos,
+    const respuestaArchivoEliminado = await crearObjectosEliminadosServicio(
+      [archivo],
       transaction
     );
-    if (respuestaEliminarCarpeta.status != 200) {
+    if (respuestaArchivoEliminado.status != 200) {
       throw new EntidadNoCreadaError("No se pudo eliminar la carpeta");
     }
+
     console.log(
       "---------------------crearCarpetaEliminadaServicio----------------------"
     );
-    const eliminarObjectos = await Objetos.update(
+    const eliminarArchivo = await Objetos.update(
       { EstaEliminado: true },
       {
         where: {
           [Op.and]: [
             {
               UbicacionLogica: {
-                [Op.like]: `%${IdObjetos}%`,
+                [Op.like]: `%${IdObjetos}`,
               },
             },
             { IdUsuarios },
@@ -1011,14 +1007,48 @@ const eliminarArchivo = async (datos = "") => {
         transaction,
       }
     );
-    const moviendoDir = await cp(lugarActual, lugarDestino, {
-      recursive: true,
-      force: true,
-    });
-    await removeSync(lugarActual);
+    /**
+     *
+     * http://localhost:5000/uploads/a28cfe9e-c855-4efa-bcbf-d5c3fa91415d/ee089e17-c9fb-422d-a7aa-0a6779ae2a1f/1c4bd385-27cd-4e46-884d-d1f74b9c8efc.json
+     * TODO: CHECAR LA EXTENCION, creo que piensa que son DIR
+     *
+     * **/
+
+    await moveSync(lugarActual, lugarDestino, { overwrite: true });
+
+    // const moviendoArchivo = await copyFile(
+    //   lugarActual,
+    //   lugarDestino,
+    //   constants.COPYFILE_FICLONE
+    // );
+    // await rm(lugarActual, { force: true, recursive: true });
 
     await transaction.commit();
     // await transaction.rollback();
+    return {
+      status: 200,
+      message: "eliminarArchivo",
+      data: {
+        archivo,
+        buscarCarpetaUbicacionEliminados,
+        lugarActual,
+        lugarDestino,
+        respuestaArchivoEliminado,
+        eliminarArchivo,
+      },
+    };
+    return {
+      status: 200,
+      message: "eliminarArchivo",
+      data: {
+        archivo,
+        buscarCarpetaUbicacionEliminados,
+        lugarActual,
+        lugarDestino,
+        respuestaArchivoEliminado,
+        eliminarArchivo,
+      },
+    };
 
     return {
       status: 200,
@@ -1035,6 +1065,9 @@ const eliminarArchivo = async (datos = "") => {
       status = 404;
       message = error.message;
     } else if (error instanceof EntidadNoCreadaError) {
+      status = 404;
+      message = error.message;
+    } else if (error instanceof OperacionUsuarioNoValidaError) {
       status = 404;
       message = error.message;
     } else {
@@ -1088,7 +1121,7 @@ const archivoPerteneceAlUsuario = async (IdObjetos = "", IdUsuarios = "") => {
   }
 };
 
-const ArchivoNoEliminado = async (IdObjetos = "") => {
+const archivoNoEliminado = async (IdObjetos = "") => {
   try {
     const archivo = await Objetos.findByPk(IdObjetos);
     if (!archivo) {
@@ -1134,6 +1167,7 @@ export {
   crearDirectorioReal,
   obtenerElementosDirectorio,
   eliminarDirectorio,
+  obtenerCarpetaDestinoEliminados,
   recuperarDirectorio,
   obtenerDesendenciaFolder,
   moverObjectoBD,
@@ -1142,5 +1176,5 @@ export {
   eliminarArchivo,
   archivoExiste,
   archivoPerteneceAlUsuario,
-  ArchivoNoEliminado,
+  archivoNoEliminado,
 };

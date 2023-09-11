@@ -3,11 +3,13 @@ import {
   crearCarpetaEliminada,
   esUnObjectoEliminado,
   restaurarDirectorioDB,
+  archivoEliminado,
+  recuperarArchivo,
 } from "./ObjectosEliminadosDAO.js";
 
-const crearObjectosEliminadosServicio = async (datos = []) => {
+const crearObjectosEliminadosServicio = async (datos = [], transaction) => {
   try {
-    const respuesta = await crearObjectosEliminados(datos);
+    const respuesta = await crearObjectosEliminados(datos, transaction);
     return respuesta;
   } catch (error) {
     return {
@@ -54,9 +56,37 @@ const restaurarDirectorioDBServicio = async (IdObjetos, transaction) => {
   }
 };
 
+const archivoEliminadoServicio = async (IdObjetos = "") => {
+  try {
+    const respuesta = await archivoEliminado(IdObjetos);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
+const recuperarArchivoServicio = async (IdObjetos = "", IdUsuarios = "") => {
+  try {
+    const respuesta = await recuperarArchivo(IdObjetos, IdUsuarios);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
 export {
   crearObjectosEliminadosServicio,
   crearCarpetaEliminadaServicio,
   esUnObjectoEliminadoServicio,
   restaurarDirectorioDBServicio,
+  archivoEliminadoServicio,
+  recuperarArchivoServicio,
 };

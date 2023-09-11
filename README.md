@@ -32,7 +32,9 @@ Storage Sync Vault es un servicio similar a Mega o Dropbox, el cual permite alma
 - Compartir folders con otros usuarios para su lectura
 - Subir archivos a los folders
 - Obtener informacion de un archivo
-- Eliminar archivo ( 🚧 _En construccion_ )
+- Eliminar archivo
+- Recuperar archivo
+- Mover archivo ( 🚧 _En construccion_ )
 
 </div>
 
