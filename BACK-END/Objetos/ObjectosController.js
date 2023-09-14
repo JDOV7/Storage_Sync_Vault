@@ -9,6 +9,7 @@ import {
   moverFolderServicio,
   obtenerInformacionArchivoServicio,
   eliminarArchivoServicio,
+  moverArchivoServicio,
 } from "./ObjectosServicio.js";
 import EntidadNoExisteError from "../Validadores/Errores/EntidadNoExisteError.js";
 import db from "../Config/db.js";
@@ -223,6 +224,26 @@ const eliminarArchivoController = async (req, res) => {
   }
 };
 
+const moverArchivoController = async (req, res) => {
+  try {
+    const {
+      params: { IdObjetos },
+      body: { Padre },
+    } = req;
+    const respuesta = await moverArchivoServicio(IdObjetos, Padre);
+    if (respuesta.status !== 200) {
+      return res.status(respuesta.status).json(respuesta);
+    }
+    return res.status(200).json(respuesta);
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error.message,
+      data: {},
+    });
+  }
+};
+
 export {
   subiendoArchivosController,
   crearDirectorioController,
@@ -232,4 +253,5 @@ export {
   moverFolderController,
   obtenerInformacionArchivoController,
   eliminarArchivoController,
+  moverArchivoController,
 };

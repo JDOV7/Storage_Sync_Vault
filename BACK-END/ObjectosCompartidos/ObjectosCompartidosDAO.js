@@ -38,4 +38,44 @@ const compartirFolderConOtrosUsuariosParaLectura = async (datos = {}) => {
   }
 };
 
-export { compartirFolderConOtrosUsuariosParaLectura };
+const compartirArchivoConOtrosUsuariosParaLectura = async (datos = {}) => {
+  try {
+    const {
+      archivo: IdObjetos,
+      body: { Correo },
+    } = datos;
+    const buscarPorCorreo = await Usuarios.findOne({
+      where: {
+        [Op.and]: [{ Correo }, { Activo: true }],
+      },
+    });
+    const datosCompartidos = {
+      IdObjetos,
+      IdUsuarios: buscarPorCorreo.IdUsuarios,
+      FechaCompartido: new Date(),
+    };
+    const crearObjectoCompartido = await ObjetosCompartidos.create(
+      datosCompartidos
+    );
+
+    return {
+      status: 200,
+      message: `Archivo compartido: ${Correo}`,
+      data: {},
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+export {
+  compartirFolderConOtrosUsuariosParaLectura,
+  compartirArchivoConOtrosUsuariosParaLectura,
+};

@@ -42,6 +42,139 @@ import { moverDir } from "../Helpers/FileSystem.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const existeFolder = async (IdObjetos = "") => {
+  try {
+    const folder = await Objetos.findByPk(IdObjetos);
+    if (!folder) {
+      throw new EntidadNoExisteError("El folder no existe");
+    }
+    // if (folder.EstaEliminado) {
+    //   throw new EntidadNoExisteError("El folder esta eliminado");
+    // }
+    if (!folder.EsDirectorio) {
+      throw new EntidadNoExisteError("No es un folder");
+    }
+    return { status: 200, message: "existe folder", data: { folder } };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (!(error instanceof EntidadNoCreadaError)) {
+    }
+    if (error instanceof EntidadNoCreadaError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof EntidadNoExisteError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 400;
+      message = error.message;
+    }
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const folderNoEliminado = async (IdObjetos = "") => {
+  try {
+    const folder = await Objetos.findByPk(IdObjetos);
+    if (!folder) {
+      throw new EntidadNoExisteError("El folder no existe");
+    }
+
+    if (!folder.EsDirectorio) {
+      throw new EntidadNoExisteError("No es un folder");
+    }
+
+    if (folder.EstaEliminado) {
+      throw new EntidadNoExisteError("El folder esta eliminado");
+    }
+
+    return { status: 200, message: "folder no eliminado", data: { folder } };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (!(error instanceof EntidadNoCreadaError)) {
+    }
+    if (error instanceof EntidadNoCreadaError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof EntidadNoExisteError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 400;
+      message = error.message;
+    }
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const folderPerteneceAlUsuario = async (IdObjetos = "", IdUsuarios = "") => {
+  try {
+    const folder = await Objetos.findOne({
+      where: {
+        [Op.and]: [{ IdObjetos }, { IdUsuarios }],
+      },
+    });
+    if (!folder) {
+      throw new EntidadNoExisteError("El folder no existe");
+    }
+
+    if (!folder.EsDirectorio) {
+      throw new EntidadNoExisteError("No es un folder");
+    }
+
+    return {
+      status: 200,
+      message: "folder pertenece al usuario",
+      data: { folder },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (!(error instanceof EntidadNoCreadaError)) {
+    }
+    if (error instanceof EntidadNoCreadaError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof EntidadNoExisteError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 400;
+      message = error.message;
+    }
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
 const subiendoArchivos = async (datos = {}) => {
   const IdUsuarios = datos.usuario.IdUsuarios;
   const UbicacionVista = datos.headers.padre.datos.UbicacionVista;
@@ -1027,7 +1160,7 @@ const eliminarArchivo = async (IdObjetos = "", IdUsuarios = "") => {
     // await transaction.rollback();
     return {
       status: 200,
-      message: "eliminarArchivo",
+      message: "Archivo eliminado",
       data: {
         archivo,
         buscarCarpetaUbicacionEliminados,
@@ -1036,26 +1169,6 @@ const eliminarArchivo = async (IdObjetos = "", IdUsuarios = "") => {
         respuestaArchivoEliminado,
         eliminarArchivo,
       },
-    };
-    return {
-      status: 200,
-      message: "eliminarArchivo",
-      data: {
-        archivo,
-        buscarCarpetaUbicacionEliminados,
-        lugarActual,
-        lugarDestino,
-        respuestaArchivoEliminado,
-        eliminarArchivo,
-      },
-    };
-
-    return {
-      status: 200,
-      message: "Carpeta Eliminada Correctamente",
-      // datos: { ...datos, todosLosObjetos, resEliminarReal },
-      // datos: { ...datos, eliminarObjectos },
-      // datos: { ...datos, todosLosObjetos, respuestaEliminarObjectos },
     };
   } catch (error) {
     console.log(error);
@@ -1159,7 +1272,117 @@ const archivoNoEliminado = async (IdObjetos = "") => {
   }
 };
 
+const moverArchivo = async (IdObjetos = "", Padre = "") => {
+  const transaction = await db.transaction();
+  try {
+    const [archivo, carpetaPadreNuevo] = await Promise.all([
+      Objetos.findByPk(IdObjetos),
+      Objetos.findByPk(Padre),
+    ]);
+
+    if (!archivo) {
+      throw new EntidadNoExisteError("No existe este archivo");
+    }
+
+    if (!carpetaPadreNuevo) {
+      throw new EntidadNoExisteError("No existe este archivo");
+    }
+
+    const extencion =
+      archivo.NombreVista.split(".")[archivo.NombreVista.split(".").length - 1];
+    const lugarActual = `${__dirname}../../public/uploads${archivo.UbicacionLogica}.${extencion}`;
+    const lugarDestino = `${__dirname}../../public/uploads${carpetaPadreNuevo.UbicacionLogica}/${IdObjetos}.${extencion}`;
+
+    // console.log(descendencia);
+    console.log("---------------------MUEVO EL Archivo----------------------");
+
+    const objecto = archivo;
+    const moverObjectoBDUno = await moverObjectoBD(
+      objecto,
+      transaction,
+      IdObjetos,
+      carpetaPadreNuevo.UbicacionLogica,
+      carpetaPadreNuevo.UbicacionVista
+    );
+    if (moverObjectoBDUno.status != 200) {
+      throw new OperacionUsuarioNoValidaError("No se pudo mover el archivo");
+    }
+
+    console.log(
+      "---------------------ACT las ubciaciones----------------------"
+    );
+
+    // console.log(obtenerCarpetaDestinoEliminados);
+    // throw new Error();
+    const moverArchivo = await Objetos.update(
+      { Padre },
+      {
+        where: {
+          [Op.and]: [
+            {
+              UbicacionLogica: {
+                [Op.like]: `%${IdObjetos}`,
+              },
+            },
+            { EstaEliminado: false },
+          ],
+        },
+        transaction,
+      }
+    );
+
+    const archivoAct = await Objetos.findByPk(IdObjetos);
+
+    /**
+     *
+     * http://localhost:5000/uploads/a28cfe9e-c855-4efa-bcbf-d5c3fa91415d/ee089e17-c9fb-422d-a7aa-0a6779ae2a1f/1c4bd385-27cd-4e46-884d-d1f74b9c8efc.json
+     * TODO: CHECAR LA EXTENCION, creo que piensa que son DIR
+     *
+     * **/
+
+    await moveSync(lugarActual, lugarDestino, { overwrite: true });
+
+    // const moviendoArchivo = await copyFile(
+    //   lugarActual,
+    //   lugarDestino,
+    //   constants.COPYFILE_FICLONE
+    // );
+    // await rm(lugarActual, { force: true, recursive: true });
+
+    await transaction.commit();
+    // await transaction.rollback();
+    return {
+      status: 200,
+      message: "mover Archivo",
+      data: { lugarActual, lugarDestino, moverObjectoBDUno, archivoAct },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof EntidadNoExisteError) {
+      status = 404;
+      message = error.message;
+    } else if (error instanceof EntidadNoCreadaError) {
+      status = 404;
+      message = error.message;
+    } else if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 404;
+      message = error.message;
+    } else {
+      await transaction.rollback();
+    }
+    return {
+      status,
+      message,
+    };
+  }
+};
+
 export {
+  existeFolder,
+  folderNoEliminado,
+  folderPerteneceAlUsuario,
   subiendoArchivos,
   crearDirectorioRaiz,
   crearDirectorio,
@@ -1177,4 +1400,5 @@ export {
   archivoExiste,
   archivoPerteneceAlUsuario,
   archivoNoEliminado,
+  moverArchivo,
 };

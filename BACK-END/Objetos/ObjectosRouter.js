@@ -8,6 +8,7 @@ import {
   moverFolderController,
   obtenerInformacionArchivoController,
   eliminarArchivoController,
+  moverArchivoController,
 } from "./ObjectosController.js";
 
 import { recuperarArchivoController } from "../ObjectosEliminados/ObjectosEliminadosController.js";
@@ -24,6 +25,9 @@ import ArchivoExiste from "../Validadores/ArchivoExiste.js";
 import ArchivoPerteneceAlUsuario from "../Validadores/ArchivoPerteneceAlUsuario.js";
 import ArchivoNoEliminado from "../Validadores/ArchivoNoEliminado.js";
 import ArchivoEliminado from "../Validadores/ArchivoEliminado.js";
+import PadreFolderExiste from "../Validadores/PadreFolderExiste.js";
+import PadreFolderNoEliminado from "../Validadores/PadreFolderNoEliminado.js";
+import PadreFolderPerteneceAlUsuario from "../Validadores/PadreFolderPerteneceAlUsuario.js";
 
 const router = express.Router();
 
@@ -99,6 +103,18 @@ router.put(
   ArchivoEliminado,
   ArchivoPerteneceAlUsuario,
   recuperarArchivoController
+);
+
+router.post(
+  "/archivos/:IdObjetos",
+  ValidarToken,
+  ArchivoExiste,
+  ArchivoNoEliminado,
+  ArchivoPerteneceAlUsuario,
+  PadreFolderExiste,
+  PadreFolderNoEliminado,
+  PadreFolderPerteneceAlUsuario,
+  moverArchivoController
 );
 
 export default router;

@@ -18,7 +18,7 @@ Storage Sync Vault es un servicio similar a Mega o Dropbox, el cual permite alma
 
 🔓**Funcionalidades publicas:**
 
-- Crear cuenta
+- Crear cuenta ( _Usando Github 🚧 En construccion_  )
 - Confirmar cuenta por medio de un token enviado al email( _Pendiente el envio del email_ )
 - Inicio de sesion
 
@@ -34,7 +34,8 @@ Storage Sync Vault es un servicio similar a Mega o Dropbox, el cual permite alma
 - Obtener informacion de un archivo
 - Eliminar archivo
 - Recuperar archivo
-- Mover archivo ( 🚧 _En construccion_ )
+- Mover archivo
+- Compartir archivo con otros usuarios para su lectura
 
 </div>
 

@@ -1,4 +1,7 @@
 import {
+  existeFolder,
+  folderNoEliminado,
+  folderPerteneceAlUsuario,
   subiendoArchivos,
   crearDirectorio,
   obtenerDatosPadre,
@@ -12,7 +15,50 @@ import {
   archivoExiste,
   archivoPerteneceAlUsuario,
   archivoNoEliminado,
+  moverArchivo,
 } from "./ObjectosDAO.js";
+
+const existeFolderServicio = async (IdObjetos = "") => {
+  try {
+    const respuesta = await existeFolder(IdObjetos);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
+const folderNoEliminadoServicio = async (IdObjetos = "") => {
+  try {
+    const respuesta = await folderNoEliminado(IdObjetos);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
+const folderPerteneceAlUsuarioServicio = async (
+  IdObjetos = "",
+  IdUsuarios = ""
+) => {
+  try {
+    const respuesta = await folderPerteneceAlUsuario(IdObjetos, IdUsuarios);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
 
 const subiendoArchivosServicio = async (datos = {}) => {
   const respuesta = await subiendoArchivos(datos);
@@ -138,7 +184,23 @@ const archivoNoEliminadoServicio = async (IdObjetos = "") => {
   }
 };
 
+const moverArchivoServicio = async (IdObjetos = "", Padre = "") => {
+  try {
+    const respuesta = await moverArchivo(IdObjetos, Padre);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
 export {
+  existeFolderServicio,
+  folderNoEliminadoServicio,
+  folderPerteneceAlUsuarioServicio,
   subiendoArchivosServicio,
   crearDirectorioServicio,
   obtenerDatosPadreServicio,
@@ -152,4 +214,5 @@ export {
   archivoExisteServicio,
   archivoPerteneceAlUsuarioServicio,
   archivoNoEliminadoServicio,
+  moverArchivoServicio,
 };
