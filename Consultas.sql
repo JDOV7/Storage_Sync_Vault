@@ -6,15 +6,17 @@ select * from storage_sync_vault.CajaFuertes;
 select * from storage_sync_vault.Objetos;
 select * from storage_sync_vault.ObjetosEliminados;
 select * from storage_sync_vault.objetoscompartidos;
+select * from storage_sync_vault.Objetos;
 
 select * from storage_sync_vault.Objetos where UbicacionLogica like '%3cddd1ea-598e-4b6b-a6f3-6db3e821472a%' and UbicacionLogica like '%8e4b149b-5fe1-4796-a77e-62ce1a00c539%';
 
 select * from storage_sync_vault.Objetos where UbicacionLogica like '%3cddd1ea-598e-4b6b-a6f3-6db3e821472a*8e4b149b-5fe1-4796-a77e-62ce1a00c539%' ;
 
-/892c45de-421a-47af-974a-fdfd21af3e6f
-/9c62ebda-26fd-4f23-aad2-19a441331cb2
-/e39bb206-f219-43f8-bb24-35ddcbdfa068
-/b48ec5c5-a54f-4d56-91bb-e9d20808db83
-/15cc6645-c128-44c8-a02b-6a884d3e081e
-/d2ad8ea0-77b9-40cf-b5ff-e548f4eeba6d
-/0e2a2adc-e0b4-4055-a51f-2c064ac2d31b
+SELECT * FROM `Objetos` AS `Objetos` WHERE (`Objetos`.`IdObjetos` = 'd72a2770-2fd2-4453-9c01-a8f75f1bc86a' AND `Objetos`.`EsDirectorio` = true AND `Objetos`.`EstaEliminado` = false) LIMIT 1;
+
+/a28cfe9e-c855-4efa-bcbf-d5c3fa91415d
+/ee089e17-c9fb-422d-a7aa-0a6779ae2a1f
+/6b3eb300-e907-4711-a4a6-76bd0599c484
+/b1e833b6-77d7-4ef6-a759-eecaa336298b
+/c2df3a4a-9c15-482e-b9c8-06da7a38ea65
+/c3406c39-eb0c-416b-8047-0026695a4ec3

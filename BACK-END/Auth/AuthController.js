@@ -1,8 +1,39 @@
 import {
+  validarCodeGithubServicio,
   creandoUsuarioServicio,
   confirmarCuentaServicio,
   LoginServicio,
 } from "./AuthServicio.js";
+import OperacionUsuarioNoValidaError from "../Validadores/Errores/OperacionUsuarioNoValidaError.js";
+
+const validarCodeGithubController = async (req, res) => {
+  try {
+    const {
+      query: { code },
+    } = req;
+
+    const respuesta = await validarCodeGithubServicio(code);
+    if (!respuesta || respuesta?.status != 200) {
+      throw new OperacionUsuarioNoValidaError(
+        "No se pudo crear la cuenta con Github"
+      );
+    }
+    return res.status(respuesta.status).json(respuesta);
+  } catch (error) {
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 500;
+      message = error.message;
+    }
+
+    return res.status(status).json({
+      status,
+      message,
+    });
+  }
+};
 
 const creandoUsuarioController = async (req, res) => {
   try {
@@ -64,4 +95,9 @@ const LoginController = async (req, res) => {
   }
 };
 
-export { creandoUsuarioController, confirmarCuentaController, LoginController };
+export {
+  validarCodeGithubController,
+  creandoUsuarioController,
+  confirmarCuentaController,
+  LoginController,
+};

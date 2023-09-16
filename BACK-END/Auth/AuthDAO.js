@@ -1,4 +1,5 @@
 import { Op } from "sequelize";
+import axios from "axios";
 
 import db from "../Config/db.js";
 import { Usuarios } from "../Models/index.js";
@@ -13,6 +14,75 @@ import EntidadNoCreadaError from "../Validadores/Errores/EntidadNoCreadaError.js
 import creandoTokenAcceso from "../Helpers/CreandoTokenAcceso.js";
 import generarJWT from "../Helpers/GenerarJWT.js";
 // correo@gmail.com
+
+const validarCodeGithub = async (code = "") => {
+  // console.log();
+  try {
+    const params = new URLSearchParams([
+      ["client_id", process.env.CLIENT_ID_GITHUB],
+      ["client_secret", process.env.CLIENT_SECRET_GITHUB],
+      ["code", code],
+    ]);
+
+    const headers = {
+      accept: "application/json",
+    };
+
+    const res = await axios.get(process.env.URL_ACCESS_TOKEN_GITHUB, {
+      params,
+      headers,
+    });
+    // console.log(res);
+    return {
+      status: 200,
+      message: "validarCodeGithub",
+      data: {
+        datos: res.data,
+      },
+    };
+  } catch (error) {
+    let status = 500,
+      message = "Error en el servidor";
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const obtenerDatosCuentaGithub = async (access_token = "") => {
+  try {
+    const headers = {
+      Authorization: "token " + access_token,
+    };
+
+    const res = await axios.get(process.env.URL_USER_DATA_GITHUB, {
+      headers,
+    });
+
+    const resEmail = await axios.get(process.env.URL_USER_EMAIL_GITHUB, {
+      headers,
+    });
+
+    // console.log(datosUser);
+    return {
+      status: 200,
+      message: "Info user",
+      data: {
+        perfil: { ...res.data, ...resEmail.data[0] },
+      },
+    };
+  } catch (error) {
+    return {
+      status: 500,
+      message: "Error en el servidor",
+      data: {},
+    };
+  }
+};
+
 const creandoUsuario = async (usuario = {}) => {
   let transaction = await db.transaction();
   try {
@@ -56,7 +126,6 @@ const creandoUsuario = async (usuario = {}) => {
         "Ocurrio un error, no se pudo crear el usuario"
       );
     }
-
 
     // await transaction.commit();
     return {
@@ -176,4 +245,10 @@ const Login = async (usuario = {}) => {
   }
 };
 
-export { creandoUsuario, confirmarCuenta, Login };
+export {
+  validarCodeGithub,
+  obtenerDatosCuentaGithub,
+  creandoUsuario,
+  confirmarCuenta,
+  Login,
+};

@@ -1,4 +1,20 @@
-import { creandoUsuario, confirmarCuenta, Login } from "./AuthDAO.js";
+import {
+  validarCodeGithub,
+  obtenerDatosCuentaGithub,
+  creandoUsuario,
+  confirmarCuenta,
+  Login,
+} from "./AuthDAO.js";
+
+const validarCodeGithubServicio = async (code = "") => {
+  const respuesta = await validarCodeGithub(code);
+  return respuesta;
+};
+
+const obtenerDatosCuentaGithubServicio = async (access_token = "") => {
+  const respuesta = await obtenerDatosCuentaGithub(access_token);
+  return respuesta;
+};
 
 const creandoUsuarioServicio = async (usuario = {}) => {
   const respuesta = await creandoUsuario(usuario);
@@ -15,4 +31,10 @@ const LoginServicio = async (usuario = {}) => {
   return respuesta;
 };
 
-export { creandoUsuarioServicio, confirmarCuentaServicio, LoginServicio };
+export {
+  validarCodeGithubServicio,
+  obtenerDatosCuentaGithubServicio,
+  creandoUsuarioServicio,
+  confirmarCuentaServicio,
+  LoginServicio,
+};
