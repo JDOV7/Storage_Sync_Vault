@@ -11,7 +11,8 @@
 ---
 
 <p align="justify">
-Storage Sync Vault es un servicio similar a Mega o Dropbox, el cual permite almacenar archivos de todo tipo (documentos personales, fotografías, videos, y un larguísimo etcétera) de una forma mucho más segura para los usuarios y, sobre todo, para la propia página.
+Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDrive, DropBox</i> ) para usuarios finales y empresas. Con Storage Sync Vault podras almacenar cualquier tipo de archivo ( <strong>imagenes, videos, documentos, etc</strong> ) de una forma segura, tambien podras acceder a ellos desde cualquier dispositivo de forma rapida unicamente iniciando sesion.
+
 </p>
 
 <div align="justify">
@@ -50,6 +51,8 @@ Storage Sync Vault es un servicio similar a Mega o Dropbox, el cual permite alma
 <img src="https://img.shields.io/badge/Express%20js-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express JS" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=Sequelize&logoColor=white" alt="Sequelize" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/OAuth%202.0-badge?style=for-the-badge&logo=auth0&logoColor=%23EB5424&labelColor=black&color=black" alt="OAuth 2.0" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white" alt="JWT" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/AWS_RDS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" alt="AWS RDS" />&nbsp;&nbsp;
 
@@ -102,10 +105,18 @@ $ npm run dev
 
 ```
 PORT=
+
 DB_HOST=
 DB_NAME=
 DB_USER=
 DB_PASS=
+
+CLIENT_ID_GITHUB=
+CLIENT_SECRET_GITHUB=
+URL_ACCESS_TOKEN_GITHUB=https://github.com/login/oauth/access_token
+URL_USER_DATA_GITHUB=https://api.github.com/user
+URL_USER_EMAIL_GITHUB=https://api.github.com/user/emails
+
 JWT_SECRET=
 ```
 
@@ -123,4 +134,7 @@ $ npm run dev
 
 <p align="justify">
 Ademas de esto se debe tener una base de datos en MySQL y tener una cuenta en mailtrap para probar los correos.
+
+
+Tambien se debe configurar su cuenta en Github para usar el servicio de OAuth.
 </p>

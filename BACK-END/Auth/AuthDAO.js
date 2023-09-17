@@ -83,6 +83,95 @@ const obtenerDatosCuentaGithub = async (access_token = "") => {
   }
 };
 
+const existeCuentaRegistradaGitHub = async (
+  IdAutorizacion = "",
+  Correo = ""
+) => {
+  try {
+    const usuario = await Usuarios.findOne({
+      where: {
+        [Op.and]: [
+          {
+            IdAutorizacion,
+          },
+          { ServidorAutorizacion: "Github" },
+          { Correo },
+        ],
+      },
+    });
+
+    if (!usuario) {
+      return {
+        status: 404,
+        message: "existeCuentaRegistradaGitHub",
+        data: {},
+      };
+    }
+
+    // console.log(datosUser);
+    return {
+      status: 200,
+      message: "existeCuentaRegistradaGitHub",
+      data: { usuario },
+    };
+  } catch (error) {
+    let status = 500,
+      message = "Error en el servidor";
+    if (error instanceof UsuarioInvalidoError) {
+      status = 400;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const crearCuentaGitHub = async (IdAutorizacion = "", Correo = "") => {
+  try {
+    const usuario = await Usuarios.findOne({
+      where: {
+        [Op.and]: [
+          {
+            IdAutorizacion,
+          },
+          { ServidorAutorizacion: "Github" },
+          { Correo },
+        ],
+      },
+    });
+
+    if (!usuario) {
+      return {
+        status: 404,
+        message: "existeCuentaRegistradaGitHub",
+        data: {},
+      };
+    }
+
+    // console.log(datosUser);
+    return {
+      status: 200,
+      message: "existeCuentaRegistradaGitHub",
+      data: { usuario },
+    };
+  } catch (error) {
+    let status = 500,
+      message = "Error en el servidor";
+    if (error instanceof UsuarioInvalidoError) {
+      status = 400;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
 const creandoUsuario = async (usuario = {}) => {
   let transaction = await db.transaction();
   try {
@@ -248,6 +337,7 @@ const Login = async (usuario = {}) => {
 export {
   validarCodeGithub,
   obtenerDatosCuentaGithub,
+  existeCuentaRegistradaGitHub,
   creandoUsuario,
   confirmarCuenta,
   Login,

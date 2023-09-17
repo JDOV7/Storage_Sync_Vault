@@ -12,14 +12,17 @@ import {
 } from "./Validadores.js";
 import ValidarCodeGitHub from "../Validadores/ValidarCodeGitHub.js";
 import ObtenerDatosCuentaGitHub from "../Validadores/ObtenerDatosCuentaGitHub.js";
+import ExisteCuentaRegistradaGitHub from "../Validadores/ExisteCuentaRegistradaGitHub.js";
 
 const router = express.Router();
 
 // https://github.com/login/oauth/authorize?client_id=6722f599ca781575b565&scope=user:email
+//TODO: falta crear la cuenta en la BD si no existe o enviar el token en caso de k si exista
 router.get(
-  "/github/sesion-iniciada",
+  "/github/iniciar-sesion",
   ValidarCodeGitHub,
   ObtenerDatosCuentaGitHub,
+  ExisteCuentaRegistradaGitHub,
   (req, res) => {
     console.log(req.body);
     // console.log("Termiando /github/sesion-iniciada");

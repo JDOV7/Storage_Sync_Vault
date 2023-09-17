@@ -1,6 +1,7 @@
 import {
   validarCodeGithub,
   obtenerDatosCuentaGithub,
+  existeCuentaRegistradaGitHub,
   creandoUsuario,
   confirmarCuenta,
   Login,
@@ -13,6 +14,17 @@ const validarCodeGithubServicio = async (code = "") => {
 
 const obtenerDatosCuentaGithubServicio = async (access_token = "") => {
   const respuesta = await obtenerDatosCuentaGithub(access_token);
+  return respuesta;
+};
+
+const existeCuentaRegistradaGitHubServicio = async (
+  IdAutorizacion = "",
+  Correo = ""
+) => {
+  const respuesta = await existeCuentaRegistradaGitHub(
+    (IdAutorizacion = ""),
+    (Correo = "")
+  );
   return respuesta;
 };
 
@@ -34,6 +46,7 @@ const LoginServicio = async (usuario = {}) => {
 export {
   validarCodeGithubServicio,
   obtenerDatosCuentaGithubServicio,
+  existeCuentaRegistradaGitHubServicio,
   creandoUsuarioServicio,
   confirmarCuentaServicio,
   LoginServicio,
