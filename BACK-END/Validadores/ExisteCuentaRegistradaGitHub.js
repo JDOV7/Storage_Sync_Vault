@@ -3,11 +3,13 @@ import OperacionUsuarioNoValidaError from "./Errores/OperacionUsuarioNoValidaErr
 const ExisteCuentaRegistradaGitHub = async (req, res, next) => {
   try {
     const {
-      body: { id, email },
+      body: {
+        perfil: { id, email },
+      },
     } = req;
-
+    console.log(req.body);
     const respuesta = await existeCuentaRegistradaGitHubServicio(id, email);
-    // console.log(respuesta);
+    console.log(respuesta);
     if (!respuesta || (respuesta?.status != 200 && respuesta?.status != 404)) {
       throw new OperacionUsuarioNoValidaError(
         "No se pudo crear la cuenta con Github"

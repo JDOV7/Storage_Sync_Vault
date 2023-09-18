@@ -2,8 +2,11 @@ import {
   validarCodeGithub,
   obtenerDatosCuentaGithub,
   existeCuentaRegistradaGitHub,
+  crearCuentaGitHub,
+  loginGithub,
   creandoUsuario,
   confirmarCuenta,
+  verificarSiLaCuentaEstaConfirmadaGithub,
   Login,
 } from "./AuthDAO.js";
 
@@ -21,10 +24,26 @@ const existeCuentaRegistradaGitHubServicio = async (
   IdAutorizacion = "",
   Correo = ""
 ) => {
-  const respuesta = await existeCuentaRegistradaGitHub(
-    (IdAutorizacion = ""),
-    (Correo = "")
+  const respuesta = await existeCuentaRegistradaGitHub(IdAutorizacion, Correo);
+  return respuesta;
+};
+
+const crearCuentaGitHubServicio = async (datos = {}) => {
+  const respuesta = await crearCuentaGitHub(datos);
+  return respuesta;
+};
+
+const verificarSiLaCuentaEstaConfirmadaGithubServicio = async (
+  IdAutorizacion = ""
+) => {
+  const respuesta = await verificarSiLaCuentaEstaConfirmadaGithub(
+    IdAutorizacion
   );
+  return respuesta;
+};
+
+const loginGithubServicio = async (IdAutorizacion = "") => {
+  const respuesta = await loginGithub(IdAutorizacion);
   return respuesta;
 };
 
@@ -47,6 +66,9 @@ export {
   validarCodeGithubServicio,
   obtenerDatosCuentaGithubServicio,
   existeCuentaRegistradaGitHubServicio,
+  crearCuentaGitHubServicio,
+  verificarSiLaCuentaEstaConfirmadaGithubServicio,
+  loginGithubServicio,
   creandoUsuarioServicio,
   confirmarCuentaServicio,
   LoginServicio,

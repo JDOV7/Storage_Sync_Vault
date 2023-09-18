@@ -19,9 +19,9 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 
 🔓**Funcionalidades publicas:**
 
-- Crear cuenta ( _Usando Github 🚧 En construccion_  )
-- Confirmar cuenta por medio de un token enviado al email( _Pendiente el envio del email_ )
-- Inicio de sesion
+- Crear cuenta ( _Usando Github, Facebook 🚧 en construccion y Local_  )
+- Confirmar cuenta por medio de un token enviado al email( _Pendiente el envio del email, pero si sirve el endpoint_ )
+- Inicio de sesion ( _Usando Github, Facebook 🚧 en construccion y Local_ )
 
 🔐**Funcionalidades privadas( _Una vez confirmada la cuenta y haber iniciado sesion_ )**:
 

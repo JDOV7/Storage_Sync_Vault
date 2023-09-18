@@ -8,6 +8,11 @@ select * from storage_sync_vault.ObjetosEliminados;
 select * from storage_sync_vault.objetoscompartidos;
 select * from storage_sync_vault.Objetos;
 
+INSERT INTO `storage_sync_vault`.`Planes` (`IdPlanes`, `Nombre`, `Precio`, `Descripcion`, `GbDisponibles`, `GbCajaFuerte`, `GbCompartidos`, `DiasRecuperacion`) VALUES ('3e366d3d-54ea-11ee-a058-0250b7d1102c', 'Plan 1', '100', 'Plan para usuarios finales', '100', '10', '5', '30');
+
+
+select uuid();
+
 select * from storage_sync_vault.Objetos where UbicacionLogica like '%3cddd1ea-598e-4b6b-a6f3-6db3e821472a%' and UbicacionLogica like '%8e4b149b-5fe1-4796-a77e-62ce1a00c539%';
 
 select * from storage_sync_vault.Objetos where UbicacionLogica like '%3cddd1ea-598e-4b6b-a6f3-6db3e821472a*8e4b149b-5fe1-4796-a77e-62ce1a00c539%' ;

@@ -1,10 +1,14 @@
 import {
   validarCodeGithubServicio,
+  crearCuentaGitHubServicio,
+  verificarSiLaCuentaEstaConfirmadaGithubServicio,
+  loginGithubServicio,
   creandoUsuarioServicio,
   confirmarCuentaServicio,
   LoginServicio,
 } from "./AuthServicio.js";
 import OperacionUsuarioNoValidaError from "../Validadores/Errores/OperacionUsuarioNoValidaError.js";
+import generarJWT from "../Helpers/GenerarJWT.js";
 
 const validarCodeGithubController = async (req, res) => {
   try {
@@ -20,6 +24,77 @@ const validarCodeGithubController = async (req, res) => {
     }
     return res.status(respuesta.status).json(respuesta);
   } catch (error) {
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 500;
+      message = error.message;
+    }
+
+    return res.status(status).json({
+      status,
+      message,
+    });
+  }
+};
+
+const crearOIniciarCuentaGithubController = async (req, res) => {
+  try {
+    const {
+      body: {
+        existeCuenta: { status },
+      },
+    } = req;
+    if (status && status == 404) {
+      let {
+        body: {
+          perfil: { email, login, id },
+        },
+      } = req;
+      const IdPlanes = "3e366d3d-54ea-11ee-a058-0250b7d1102c";
+      const datos = { email, login, id, IdPlanes };
+      // console.log(datos);
+      const respuestaCrearCuentaGithub = await crearCuentaGitHubServicio(datos);
+      console.log(respuestaCrearCuentaGithub);
+      return res.status(201).json({
+        status: 201,
+        message: "/github/iniciar-sesion",
+        data: { respuestaCrearCuentaGithub },
+      });
+    } else if (status && status == 200) {
+      const {
+        body: {
+          perfil: { id },
+        },
+      } = req;
+      const respuestaVerificarCuenta =
+        await verificarSiLaCuentaEstaConfirmadaGithubServicio(id);
+      console.log(respuestaVerificarCuenta);
+
+      if (
+        !respuestaVerificarCuenta ||
+        respuestaVerificarCuenta?.status != 200
+      ) {
+        throw new OperacionUsuarioNoValidaError("Error con la cuenta");
+      }
+
+      const respuestaLoginGithub = await loginGithubServicio(id);
+
+      if (!respuestaLoginGithub || respuestaLoginGithub.status != 200) {
+        throw new OperacionUsuarioNoValidaError("Error con la cuenta");
+      }
+
+      return res.status(200).json({
+        status: 200,
+        message: "/github/iniciar-sesion",
+        data: { respuestaLoginGithub },
+      });
+    } else {
+      throw new OperacionUsuarioNoValidaError("Error con la cuenta");
+    }
+  } catch (error) {
+    console.log(error);
     let status = 500,
       message = "Error en el servidor";
 
@@ -97,6 +172,7 @@ const LoginController = async (req, res) => {
 
 export {
   validarCodeGithubController,
+  crearOIniciarCuentaGithubController,
   creandoUsuarioController,
   confirmarCuentaController,
   LoginController,

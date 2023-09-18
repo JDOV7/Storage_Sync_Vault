@@ -99,6 +99,9 @@ const existeCuentaRegistradaGitHub = async (
         ],
       },
     });
+    console.log(`${IdAutorizacion}-${Correo}`);
+
+    console.log(usuario);
 
     if (!usuario) {
       return {
@@ -108,7 +111,6 @@ const existeCuentaRegistradaGitHub = async (
       };
     }
 
-    // console.log(datosUser);
     return {
       status: 200,
       message: "existeCuentaRegistradaGitHub",
@@ -129,37 +131,147 @@ const existeCuentaRegistradaGitHub = async (
   }
 };
 
-const crearCuentaGitHub = async (IdAutorizacion = "", Correo = "") => {
+const crearCuentaGitHub = async (datos = {}) => {
+  const transaction = await db.transaction();
   try {
-    const usuario = await Usuarios.findOne({
+    const {
+      IdPlanes,
+      email: Correo,
+      login: Nombres,
+      id: IdAutorizacion,
+    } = datos;
+
+    const crearUsuarioGitHubDatos = {
+      IdPlanes,
+      Correo,
+      Nombres,
+      Activo: false,
+      IdAutorizacion,
+      Password: "",
+      ServidorAutorizacion: "Github",
+    };
+
+    const crearUsuario = await Usuarios.create(crearUsuarioGitHubDatos, {
+      transaction,
+    });
+    // throw new Error("");
+
+    const respuestaCajaFuerte = await crearCajaFuerte(
+      crearUsuario.IdUsuarios,
+      transaction
+    );
+
+    if (respuestaCajaFuerte.status !== 200) {
+      throw new EntidadNoCreadaError(
+        "Ocurrio un error, no se pudo crear el usuario"
+      );
+    }
+
+    // await transaction.commit();
+    return {
+      status: 201,
+      message: "Usuario creado correctamente",
+      data: {},
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof UsuarioDuplicadoError) {
+      await transaction.rollback();
+      status = 400;
+      message = error.message;
+    } else if (error instanceof EntidadNoCreadaError) {
+      status = 500;
+      message = error.message;
+    } else if (error?.name === "SequelizeForeignKeyConstraintError") {
+      await transaction.rollback();
+      status = 500;
+      message =
+        "Error en el servidor, el plan escogido no esta disponible o no existe";
+    }
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const verificarSiLaCuentaEstaConfirmadaGithub = async (IdAutorizacion = "") => {
+  try {
+    const buscarUsuario = await Usuarios.findOne({
       where: {
         [Op.and]: [
-          {
-            IdAutorizacion,
-          },
+          { IdAutorizacion },
           { ServidorAutorizacion: "Github" },
-          { Correo },
+          { Activo: true },
         ],
       },
     });
 
-    if (!usuario) {
-      return {
-        status: 404,
-        message: "existeCuentaRegistradaGitHub",
-        data: {},
-      };
+    if (!buscarUsuario) {
+      throw new TokenInvalidoError("Cuenta no autorizada");
     }
-
-    // console.log(datosUser);
+    // console.log(buscarUsuario);
     return {
       status: 200,
-      message: "existeCuentaRegistradaGitHub",
-      data: { usuario },
+      message: "Cuenta confirmada",
+      data: { buscarUsuario },
     };
   } catch (error) {
-    let status = 500,
-      message = "Error en el servidor";
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof TokenInvalidoError) {
+      status = 400;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const loginGithub = async (IdAutorizacion = "") => {
+  try {
+    console.log(IdAutorizacion);
+    const buscarUsuario = await Usuarios.findOne({
+      where: {
+        [Op.and]: [
+          { IdAutorizacion },
+          { Activo: true },
+          { ServidorAutorizacion: "Github" },
+        ],
+      },
+    });
+
+    if (!buscarUsuario) {
+      throw new UsuarioInvalidoError(`No se puede iniciar sesion`);
+    }
+    const TokenAcceso = await creandoTokenAcceso(35);
+    const info = {
+      TokenAcceso,
+    };
+    buscarUsuario.TokenAcceso = TokenAcceso;
+    await buscarUsuario.save();
+
+    const tokenJWT = generarJWT(info);
+
+    return {
+      status: 200,
+      message: "Logeado Existosamente",
+      data: {
+        tokenJWT,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
     if (error instanceof UsuarioInvalidoError) {
       status = 400;
       message = error.message;
@@ -338,7 +450,10 @@ export {
   validarCodeGithub,
   obtenerDatosCuentaGithub,
   existeCuentaRegistradaGitHub,
+  crearCuentaGitHub,
+  loginGithub,
   creandoUsuario,
   confirmarCuenta,
+  verificarSiLaCuentaEstaConfirmadaGithub,
   Login,
 };

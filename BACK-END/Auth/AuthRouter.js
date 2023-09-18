@@ -1,6 +1,7 @@
 import express from "express";
 import {
-  validarCodeGithubController,
+  // validarCodeGithubController,
+  crearOIniciarCuentaGithubController,
   creandoUsuarioController,
   confirmarCuentaController,
   LoginController,
@@ -17,20 +18,12 @@ import ExisteCuentaRegistradaGitHub from "../Validadores/ExisteCuentaRegistradaG
 const router = express.Router();
 
 // https://github.com/login/oauth/authorize?client_id=6722f599ca781575b565&scope=user:email
-//TODO: falta crear la cuenta en la BD si no existe o enviar el token en caso de k si exista
 router.get(
-  "/github/iniciar-sesion",
+  "/github/crear-iniciar-sesion",
   ValidarCodeGitHub,
   ObtenerDatosCuentaGitHub,
   ExisteCuentaRegistradaGitHub,
-  (req, res) => {
-    console.log(req.body);
-    // console.log("Termiando /github/sesion-iniciada");
-    return res.status(200).json({
-      status: 200,
-      message: "/github/sesion-iniciada",
-    });
-  }
+  crearOIniciarCuentaGithubController
 );
 
 router.post("/usuario", validandoCrearUsuario, creandoUsuarioController);
