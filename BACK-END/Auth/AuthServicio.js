@@ -4,6 +4,9 @@ import {
   existeCuentaRegistradaGitHub,
   crearCuentaGitHub,
   loginGithub,
+  validarFacebook,
+  obtenerDatosCuentaFacebook,
+  existeCuentaRegistradaFacebook,
   creandoUsuario,
   confirmarCuenta,
   verificarSiLaCuentaEstaConfirmadaGithub,
@@ -47,6 +50,27 @@ const loginGithubServicio = async (IdAutorizacion = "") => {
   return respuesta;
 };
 
+const validarCodeFacebookServicio = async (code = "") => {
+  const respuesta = await validarFacebook(code);
+  return respuesta;
+};
+
+const obtenerDatosCuentaFacebookServicio = async (access_token = "") => {
+  const respuesta = await obtenerDatosCuentaFacebook(access_token);
+  return respuesta;
+};
+
+const existeCuentaRegistradaFacebookServicio = async (
+  IdAutorizacion = "",
+  Correo = ""
+) => {
+  const respuesta = await existeCuentaRegistradaFacebook(
+    IdAutorizacion,
+    Correo
+  );
+  return respuesta;
+};
+
 const creandoUsuarioServicio = async (usuario = {}) => {
   const respuesta = await creandoUsuario(usuario);
   return respuesta;
@@ -69,6 +93,9 @@ export {
   crearCuentaGitHubServicio,
   verificarSiLaCuentaEstaConfirmadaGithubServicio,
   loginGithubServicio,
+  validarCodeFacebookServicio,
+  obtenerDatosCuentaFacebookServicio,
+  existeCuentaRegistradaFacebookServicio,
   creandoUsuarioServicio,
   confirmarCuentaServicio,
   LoginServicio,

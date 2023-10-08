@@ -1,6 +1,7 @@
 import express, { json } from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import cors from "cors";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -37,6 +38,22 @@ try {
 } catch (error) {
   console.log(error);
 }
+app.use(express.static("public"));
+
+const dominiosPermitidos = [process.env.FRONTEND_URL, "https://localhost:3001"];
+const corsOptions = {
+  origin: function (origin, callback) {
+    callback(null, true);
+    // if (dominiosPermitidos.indexOf(origin) !== -1) {
+
+    //   callback(null, true);
+    // } else {
+    //   callback(new Error("No permitdo por CORS"));
+    // }
+  },
+};
+
+app.use(cors(corsOptions));
 
 app.use("/auth", routerAuth);
 app.use("/usuarios", routerUsuario);

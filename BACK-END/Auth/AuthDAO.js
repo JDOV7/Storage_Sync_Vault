@@ -284,6 +284,120 @@ const loginGithub = async (IdAutorizacion = "") => {
   }
 };
 
+const validarFacebook = async (code = "") => {
+  // console.log();
+  try {
+    const params = new URLSearchParams([
+      ["client_id", process.env.CLIENT_ID_FACEBOOK],
+      ["client_secret", process.env.CLIENT_SECRET_FACEBOOK],
+      ["code", code],
+      [
+        "redirect_uri",
+        "http://localhost:5000/auth/facebook/crear-iniciar-sesion",
+      ],
+    ]);
+
+    const res = await axios.get(process.env.URL_ACCESS_TOKEN_FACEBOOK, {
+      params,
+      // headers,
+    });
+
+    return {
+      status: 200,
+      message: "validarCodeFacebook",
+      data: {
+        datos: res.data,
+      },
+    };
+  } catch (error) {
+    console.log(error.response);
+    let status = 500,
+      message = "Error en el servidor al validar con facebook";
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const obtenerDatosCuentaFacebook = async (access_token = "") => {
+  try {
+    const fields =
+      "email,id,first_name,last_name,middle_name,name,name_format,picture,short_name";
+    const datosUser = await axios.get(process.env.URL_USER_DATA_FACEBOOK, {
+      params: {
+        fields,
+        access_token,
+      },
+    });
+    console.log(datosUser.data);
+    return {
+      status: 200,
+      message: "Info user",
+      data: {
+        perfil: datosUser.data,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+      data: {},
+    };
+  }
+};
+
+const existeCuentaRegistradaFacebook = async (
+  IdAutorizacion = "",
+  Correo = ""
+) => {
+  try {
+    const usuario = await Usuarios.findOne({
+      where: {
+        [Op.and]: [
+          {
+            IdAutorizacion,
+          },
+          { ServidorAutorizacion: "Facebook" },
+          { Correo },
+        ],
+      },
+    });
+    console.log(`${IdAutorizacion}-${Correo}`);
+
+    console.log(usuario);
+
+    if (!usuario) {
+      return {
+        status: 404,
+        message: "existeCuentaRegistradaFacebook",
+        data: {},
+      };
+    }
+
+    return {
+      status: 200,
+      message: "existeCuentaRegistradaFacebook",
+      data: { usuario },
+    };
+  } catch (error) {
+    let status = 500,
+      message = "Error en el servidor facebook";
+    if (error instanceof UsuarioInvalidoError) {
+      status = 400;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
 const creandoUsuario = async (usuario = {}) => {
   let transaction = await db.transaction();
   try {
@@ -452,6 +566,9 @@ export {
   existeCuentaRegistradaGitHub,
   crearCuentaGitHub,
   loginGithub,
+  validarFacebook,
+  obtenerDatosCuentaFacebook,
+  existeCuentaRegistradaFacebook,
   creandoUsuario,
   confirmarCuenta,
   verificarSiLaCuentaEstaConfirmadaGithub,
