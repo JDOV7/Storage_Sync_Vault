@@ -2,6 +2,7 @@ import express from "express";
 import {
   // validarCodeGithubController,
   crearOIniciarCuentaGithubController,
+  crearOIniciarCuentaFacebookController,
   creandoUsuarioController,
   confirmarCuentaController,
   LoginController,
@@ -36,7 +37,7 @@ router.get(
   ValidarCodeFacebook,
   ObtenerDatosCuentaFacebook,
   ExisteCuentaRegistradaFacebook,
-  // crearOIniciarCuentaFacebookController,
+  crearOIniciarCuentaFacebookController,
   (req, res) => {
     console.log(req.query);
     // return res.json({ message: "legamos" });

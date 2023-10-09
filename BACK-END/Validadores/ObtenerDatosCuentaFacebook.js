@@ -10,7 +10,7 @@ const ObtenerDatosCuentaFacebook = async (req, res, next) => {
     const respuesta = await obtenerDatosCuentaFacebookServicio(access_token);
     if (!respuesta || respuesta?.status != 200) {
       throw new OperacionUsuarioNoValidaError(
-        "No se pudo crear la cuenta con Github"
+        "No se pudo crear la cuenta con Facebook"
       );
     }
     req.body.perfil = respuesta.data.perfil;
@@ -19,7 +19,7 @@ const ObtenerDatosCuentaFacebook = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     let status = 500,
-      message = "Error en el servidor ObtenerDatosCuentaGitHub M";
+      message = "Error en el servidor ObtenerDatosCuentaFacebook M";
 
     if (error instanceof OperacionUsuarioNoValidaError) {
       status = 500;

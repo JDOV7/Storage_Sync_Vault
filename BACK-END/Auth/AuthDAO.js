@@ -398,6 +398,163 @@ const existeCuentaRegistradaFacebook = async (
   }
 };
 
+const crearCuentaFacebook = async (datos = {}) => {
+  const transaction = await db.transaction();
+  try {
+    const {
+      IdPlanes,
+      email: Correo,
+      Nombres,
+      Apellidos,
+      id: IdAutorizacion,
+    } = datos;
+
+    const crearUsuarioDatos = {
+      IdPlanes,
+      Correo,
+      Nombres,
+      Apellidos,
+      Activo: false,
+      IdAutorizacion,
+      Password: "",
+      ServidorAutorizacion: "Facebook",
+    };
+
+    const crearUsuario = await Usuarios.create(crearUsuarioDatos, {
+      transaction,
+    });
+    // throw new Error("");
+
+    const respuestaCajaFuerte = await crearCajaFuerte(
+      crearUsuario.IdUsuarios,
+      transaction
+    );
+
+    if (respuestaCajaFuerte.status !== 200) {
+      throw new EntidadNoCreadaError(
+        "Ocurrio un error, no se pudo crear el usuario"
+      );
+    }
+
+    // await transaction.commit();
+    return {
+      status: 201,
+      message: "Usuario creado correctamente",
+      data: {},
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof UsuarioDuplicadoError) {
+      await transaction.rollback();
+      status = 400;
+      message = error.message;
+    } else if (error instanceof EntidadNoCreadaError) {
+      status = 500;
+      message = error.message;
+    } else if (error?.name === "SequelizeForeignKeyConstraintError") {
+      await transaction.rollback();
+      status = 500;
+      message =
+        "Error en el servidor, el plan escogido no esta disponible o no existe";
+    }
+
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const verificarSiLaCuentaEstaConfirmadaFacebook = async (
+  IdAutorizacion = ""
+) => {
+  try {
+    const buscarUsuario = await Usuarios.findOne({
+      where: {
+        [Op.and]: [
+          { IdAutorizacion },
+          { ServidorAutorizacion: "Facebook" },
+          { Activo: true },
+        ],
+      },
+    });
+
+    if (!buscarUsuario) {
+      throw new TokenInvalidoError("Cuenta no autorizada Facebook");
+    }
+    // console.log(buscarUsuario);
+    return {
+      status: 200,
+      message: "Cuenta confirmada",
+      data: { buscarUsuario },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof TokenInvalidoError) {
+      status = 400;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
+const loginFacebook = async (IdAutorizacion = "") => {
+  try {
+    console.log(IdAutorizacion);
+    const buscarUsuario = await Usuarios.findOne({
+      where: {
+        [Op.and]: [
+          { IdAutorizacion },
+          { Activo: true },
+          { ServidorAutorizacion: "Facebook" },
+        ],
+      },
+    });
+
+    if (!buscarUsuario) {
+      throw new UsuarioInvalidoError(`No se puede iniciar sesion`);
+    }
+    const TokenAcceso = await creandoTokenAcceso(35);
+    const info = {
+      TokenAcceso,
+    };
+    buscarUsuario.TokenAcceso = TokenAcceso;
+    await buscarUsuario.save();
+
+    const tokenJWT = generarJWT(info);
+
+    return {
+      status: 200,
+      message: "Logeado Existosamente",
+      data: {
+        tokenJWT,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500;
+    let message = "Error en el servidor";
+    if (error instanceof UsuarioInvalidoError) {
+      status = 400;
+      message = error.message;
+    }
+    return {
+      status,
+      message,
+      data: {},
+    };
+  }
+};
+
 const creandoUsuario = async (usuario = {}) => {
   let transaction = await db.transaction();
   try {
@@ -569,6 +726,9 @@ export {
   validarFacebook,
   obtenerDatosCuentaFacebook,
   existeCuentaRegistradaFacebook,
+  crearCuentaFacebook,
+  verificarSiLaCuentaEstaConfirmadaFacebook,
+  loginFacebook,
   creandoUsuario,
   confirmarCuenta,
   verificarSiLaCuentaEstaConfirmadaGithub,

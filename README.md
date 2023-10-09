@@ -19,9 +19,9 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 
 🔓**Funcionalidades publicas:**
 
-- Crear cuenta ( _Usando Github, Facebook 🚧 en construccion y Local_  )
+- Crear cuenta ( _Usando Github, Facebook y Local_  )
 - Confirmar cuenta por medio de un token enviado al email( _Pendiente el envio del email, pero si sirve el endpoint_ )
-- Inicio de sesion ( _Usando Github, Facebook 🚧 en construccion y Local_ )
+- Inicio de sesion ( _Usando Github, Facebook y Local_ )
 
 🔐**Funcionalidades privadas( _Una vez confirmada la cuenta y haber iniciado sesion_ )**:
 
@@ -67,6 +67,8 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 - **JWT**: Version 9.0.1
 
 🎨**Principales tecnologias usadas para el Front-End:**
+
+<p align="center">🚧 En construccion 🚧</p>
 
 💾**Bases de datos**:
 
@@ -116,6 +118,11 @@ CLIENT_SECRET_GITHUB=
 URL_ACCESS_TOKEN_GITHUB=https://github.com/login/oauth/access_token
 URL_USER_DATA_GITHUB=https://api.github.com/user
 URL_USER_EMAIL_GITHUB=https://api.github.com/user/emails
+
+CLIENT_ID_FACEBOOK=
+CLIENT_SECRET_FACEBOOK=
+URL_ACCESS_TOKEN_FACEBOOK =https://graph.facebook.com/v18.0/oauth/access_token
+URL_USER_DATA_FACEBOOK=https://graph.facebook.com/v18.0/me
 
 JWT_SECRET=
 ```

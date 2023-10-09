@@ -3,13 +3,16 @@ import {
   obtenerDatosCuentaGithub,
   existeCuentaRegistradaGitHub,
   crearCuentaGitHub,
+  verificarSiLaCuentaEstaConfirmadaGithub,
   loginGithub,
   validarFacebook,
   obtenerDatosCuentaFacebook,
   existeCuentaRegistradaFacebook,
+  crearCuentaFacebook,
+  verificarSiLaCuentaEstaConfirmadaFacebook,
+  loginFacebook,
   creandoUsuario,
   confirmarCuenta,
-  verificarSiLaCuentaEstaConfirmadaGithub,
   Login,
 } from "./AuthDAO.js";
 
@@ -71,6 +74,25 @@ const existeCuentaRegistradaFacebookServicio = async (
   return respuesta;
 };
 
+const crearCuentaFacebookServicio = async (datos = {}) => {
+  const respuesta = await crearCuentaFacebook(datos);
+  return respuesta;
+};
+
+const verificarSiLaCuentaEstaConfirmadaFacebookServicio = async (
+  IdAutorizacion = ""
+) => {
+  const respuesta = await verificarSiLaCuentaEstaConfirmadaFacebook(
+    IdAutorizacion
+  );
+  return respuesta;
+};
+
+const loginFacebookServicio = async (IdAutorizacion = "") => {
+  const respuesta = await loginFacebook(IdAutorizacion);
+  return respuesta;
+};
+
 const creandoUsuarioServicio = async (usuario = {}) => {
   const respuesta = await creandoUsuario(usuario);
   return respuesta;
@@ -96,6 +118,9 @@ export {
   validarCodeFacebookServicio,
   obtenerDatosCuentaFacebookServicio,
   existeCuentaRegistradaFacebookServicio,
+  crearCuentaFacebookServicio,
+  verificarSiLaCuentaEstaConfirmadaFacebookServicio,
+  loginFacebookServicio,
   creandoUsuarioServicio,
   confirmarCuentaServicio,
   LoginServicio,
