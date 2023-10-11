@@ -53,8 +53,12 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 <img src="https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=Sequelize&logoColor=white" alt="Sequelize" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/OAuth%202.0-badge?style=for-the-badge&logo=auth0&logoColor=%23EB5424&labelColor=black&color=black" alt="OAuth 2.0" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white" alt="Facebook" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white" alt="JWT" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/AWS_RDS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" alt="AWS RDS" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />&nbsp;&nbsp;
 
 </div>
 
@@ -68,6 +72,9 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 
 🎨**Principales tecnologias usadas para el Front-End:**
 
+- **Vite**: Version *
+- **React**: Version *
+- **Tailwind CSS**: Version *
 <p align="center">🚧 En construccion 🚧</p>
 
 💾**Bases de datos**:
