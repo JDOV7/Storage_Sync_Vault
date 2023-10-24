@@ -4,16 +4,21 @@ import HeaderLandingPage from "../componentes/landing/HeaderLandingPage";
 import PorqueEscogerSSV from "../componentes/landing/PorqueEscogerSSV";
 import CompetenciaCard from "../componentes/cards/CompetenciaCard";
 import intimidadFoto from "../../public/img/intimidad.png";
+import dropboxLogo from "../../public/img/dropbox.png";
+import megaLogo from "../../public/img/mega.png";
+import driveLogo from "../../public/img/google-drive.png";
 
 const LandingPage = () => {
   const datos = [
-    { empresa: "MEGA", precio: "1,56 €*" },
-    { empresa: "Dropbox", precio: "5,50 €*" },
-    { empresa: "Google Drive", precio: "3,70 €*" },
+    { empresa: "MEGA", precio: "0.019 ETH*", icon: megaLogo },
+    { empresa: "Dropbox", precio: "0.011 ETH*", icon: dropboxLogo },
+    { empresa: "Google Drive", precio: "0.0024 ETH*", icon: driveLogo },
   ];
   return (
     <>
-      <HeaderLandingPage></HeaderLandingPage>
+      <div className="bg-slate-900">
+        <HeaderLandingPage></HeaderLandingPage>
+      </div>
       <div className="py-20 px-4 bg-slate-900">
         <div className="pt-20 pb-10 text-center text-6xl font-extrabold text-white">
           <h1>Privacidad en línea para todos</h1>

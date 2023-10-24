@@ -1,13 +1,15 @@
 import React from "react";
 
 const CompetenciaCard = ({ props }) => {
-  const { empresa, precio } = props;
+  const { empresa, precio, icon } = props;
   console.log(props);
   return (
     <>
       <div className="bg-slate-900 col-span-3 px-6">
         <div className="rounded-3xl bg-slate-800">
           <div className=" p-10 ">
+            <img src={icon} alt="" />
+
             <h1 className="text-2xl py-6 text-white font-bold">
               {empresa || ""}
             </h1>

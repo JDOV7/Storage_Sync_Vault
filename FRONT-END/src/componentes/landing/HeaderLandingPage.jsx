@@ -1,5 +1,7 @@
 import React from "react";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 import nube from "../../../public/img/nube.png";
 import nube2 from "../../../public/img/nube2.png";
 import discoDuro from "../../../public/img/disco-duro.png";
@@ -15,29 +17,29 @@ const HeaderLandingPage = () => {
   const [hoverFormTexto, setHoverFormTexto] = useState(false);
   return (
     <>
-      <header className=" w-full  lg:fixed ">
-        <nav className="bg-slate-900 border-gray-200 py-2.5 ">
+      <header className=" w-full  lg:fixed bg-slate-900 rounded-2xl border-b border-solid border-slate-700">
+        <nav className=" py-2 ">
           <div className="flex items-center justify-between max-w-screen-xl  mx-auto">
-            <a href="#" className="flex items-center">
+            <Link to="/" className="flex items-center">
               <span className="self-center text-xl text-white font-semibold whitespace-nowrap ">
                 Storage Sync Vault
               </span>
-            </a>
+            </Link>
             <div className="flex items-center lg:order-2">
-              <a
-                href="#"
-                className="text-slate-700 bg-slate-400 hover:bg-slate-500 focus:ring-4 focus:ring-slate-400 font-medium rounded-lg text-base px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0  focus:outline-none hover:cursor-pointer"
+              <Link
+                to="/login"
+                className="bg-cyan-500 w-full py-2 px-6 rounded-xl text-black uppercase font-bold hover:cursor-pointer hover:bg-cyan-700  md:w-auto"
               >
                 Crear Cuenta
-              </a>
+              </Link>
             </div>
             <div>
-              <ul className=" mt-4 font-medium">
+              <ul className="  font-medium">
                 <li>
                   <div>
                     <div className="group  cursor-pointer">
-                      <div>
-                        <a className="menu-hover text-xl   py-2   text-white     ">
+                      <div className="  flex items-center text-center justify-center">
+                        <a className="text-lg text-white font-semibold whitespace-nowrap">
                           Servicios
                         </a>
                       </div>
@@ -47,8 +49,11 @@ const HeaderLandingPage = () => {
                             <div className="">
                               <div className="px-4">
                                 <div className="w-full h-full">
-                                  <div>
-                                    <a href="#" className="my-2  py-1  ">
+                                  <div className="pb-8">
+                                    <Link
+                                      to="/storage"
+                                      className="my-2  py-1  "
+                                    >
                                       <div
                                         onMouseEnter={() => {
                                           setHover(true);
@@ -67,10 +72,10 @@ const HeaderLandingPage = () => {
                                               />
                                             </div>
                                             <span
-                                              className={` font-semibold   text-lg ${
+                                              className={` font-semibold  flex items-center justify-center text-center text-base ${
                                                 hover
-                                                  ? "text-cyan-500 text-xl"
-                                                  : "text-white font-semibold text-lg"
+                                                  ? "text-cyan-500 text-lg"
+                                                  : "text-white font-semibold text-base"
                                               }`}
                                             >
                                               Almacenamiento en la nube
@@ -82,12 +87,12 @@ const HeaderLandingPage = () => {
                                           </span>
                                         </div>
                                       </div>
-                                    </a>
+                                    </Link>
                                   </div>
 
                                   <div>
-                                    <a
-                                      href="#"
+                                    <Link
+                                      to="/backup"
                                       className="my-2  py-1 border-b-2  md:mx-2"
                                     >
                                       <div
@@ -113,10 +118,10 @@ const HeaderLandingPage = () => {
                                               />
                                             </div>
                                             <span
-                                              className={` font-semibold   text-lg ${
+                                              className={` font-semibold  flex items-center justify-center text-center text-base ${
                                                 hoverDiscoDuro
-                                                  ? "text-cyan-500 text-xl"
-                                                  : "text-white text-lg"
+                                                  ? "text-cyan-500 text-lg"
+                                                  : "text-white text-base"
                                               }`}
                                             >
                                               Backups
@@ -128,15 +133,15 @@ const HeaderLandingPage = () => {
                                           </span>
                                         </div>
                                       </div>
-                                    </a>
+                                    </Link>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            <div className="">
+                            <div>
                               <div className="px-4">
-                                <div>
-                                  <a href="#" className=" py-1 ">
+                                <div className="pb-8">
+                                  <Link to="/share" className=" py-1 ">
                                     <div
                                       onMouseEnter={() => {
                                         setHoverCompartir(true);
@@ -147,7 +152,7 @@ const HeaderLandingPage = () => {
                                     >
                                       <div>
                                         <div className="flex">
-                                          <div className=" flex items-center justify-center ">
+                                          <div className=" flex items-center justify-center text-center ">
                                             <img
                                               className="px-2"
                                               src={`${
@@ -159,10 +164,10 @@ const HeaderLandingPage = () => {
                                             />
                                           </div>
                                           <span
-                                            className={` font-semibold   text-lg ${
+                                            className={` font-semibold flex items-center justify-center text-centerr  text-base ${
                                               hoverCompartir
-                                                ? "text-cyan-500 text-xl"
-                                                : "text-white font-semibold text-lg"
+                                                ? "text-cyan-500 text-lg"
+                                                : "text-white font-semibold text-base"
                                             }`}
                                           >
                                             Compartir
@@ -173,10 +178,10 @@ const HeaderLandingPage = () => {
                                         </span>
                                       </div>
                                     </div>
-                                  </a>
+                                  </Link>
                                 </div>
 
-                                <div>
+                                <div className="pb-8">
                                   <a
                                     href="#"
                                     className="my-2  py-1 border-b-2  md:mx-2"
@@ -204,10 +209,10 @@ const HeaderLandingPage = () => {
                                             />
                                           </div>
                                           <span
-                                            className={` font-semibold   text-lg ${
+                                            className={` font-semibold flex items-center justify-center text-center  text-base ${
                                               hoverFormTexto
-                                                ? "text-cyan-500 text-xl"
-                                                : "text-white font-semibold text-lg"
+                                                ? "text-cyan-500 text-lg"
+                                                : "text-white font-semibold text-base"
                                             }`}
                                           >
                                             Ofimatica
