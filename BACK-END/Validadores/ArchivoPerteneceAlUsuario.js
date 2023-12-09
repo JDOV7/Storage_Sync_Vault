@@ -19,6 +19,15 @@ const ArchivoPerteneceAlUsuario = async (req, res, next) => {
     ) {
       throw new EntidadNoExisteError("Este Archivo no existe");
     }
+    req.body.Cid = archivoPerteneceAlUsuarioServicioRespuesta.data.archivo.Cid;
+    // return res.status(200).json({
+    //   status: 200,
+    //   message: "ArchivoPerteneceAlUsuario",
+    //   data: {
+    //     Cid: archivoPerteneceAlUsuarioServicioRespuesta.data.archivo.Cid,
+    //     usuario: req.usuario,
+    //   },
+    // });
     return next();
   } catch (error) {
     console.log("-------ArchivoPerteneceAlUsuario------");

@@ -30,7 +30,10 @@ const BackUpPage = () => {
   return (
     <>
       <div className="bg-slate-900">
-        <HeaderLandingPage></HeaderLandingPage>
+        <HeaderLandingPage
+          btnTexto={"Inicia Sesion"}
+          url={"/login"}
+        ></HeaderLandingPage>
       </div>
       <div className="w-full bg-slate-900">
         <div>

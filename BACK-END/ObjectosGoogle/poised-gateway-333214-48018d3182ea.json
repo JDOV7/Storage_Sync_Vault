@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "poised-gateway-333214",
+  "private_key_id": "48018d3182eadde546d9a519bac8e4de9ea2d445",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCk9IbjQo0p999M\nuvq1ZmmeQagmnxm5IyybumCD/Vk2sQ9fBNxp7XMFfOYBy3Awz8PGcQqw6bC86kOT\nhjq3U8QeW9C55ETfBeYfJQNlcT0K/Yjto6FITTHohel5Wt45+cKoOvZkA2P3mOsv\nJwnz14hrq3TLVTO08Nk4JDVP68oYKSWiap8h3fsYi833PjMVZlO1lQL/VikFhiMq\nDQA5HM/sCNW+wi4GqNIRNKU78mh/VDJzGvPLWMzzko5yOpB6t3RDXQPXdgjZN35c\nUAqbFJEk9bByjbPPbwJDIAAfFzv72Bsh/eLlNisQR4Jono4Z8/TMCvPgIP3daR1w\nwU7ltSUvAgMBAAECggEATDztyMQ9/QsgS9TRQZyzLN74id0XpO8CU3ko2Wfy3ymn\nSomzG0wQ0JUAswyk7hJgT+t3/vsK4c097UVpBsjyx/s0dW3wfMk7qeJP9wcGqPkz\n2204gfOXoPmfRiS+t7ndAya5MNE2Vz14WSMoYOgZF3Y3dTCMRNDZ/C4T67u0/EPt\nNyMh5bBqQOj5ajS59ThbPAUDRMVADpMO7bgD9zNuaRMd1Bz8QbHzfcDjWrMSVqXS\n8dVQ14ULUedNdp6GORXXskt+SMsMaLBw9uk0T7qM2qTykTuQJnVL2GUCVczMGrhk\nepcHHuFs6N2Rbkl35HpqypitUJc/heargoLNAA9OEQKBgQDj2N+9nm7E2R2l6Y3x\nPQtxb/mhsM3cfmno9py3P07KBqR4S4k6/XIalOIWSOC1uCqZ07eVu1kWWlAifoPc\nkhSWPXKI1JJNA+J3n1gT94dWbkKRMb+8m2R3Ua2pdyNo6v+yZercQb2uLhD4I7dw\nLyNP5x0cnryL7W7HhgVEdvD5UQKBgQC5VkqKn0sFmuXPSHCXxC2PxnKrcX42lHrg\n9NDPq33T0s+DYkljn/Dfuh5gUOsSy/YzPgRtW3yi1arfwkVaZ01otQSnrS56wK52\nMWUDyUKr3DKaRXtEGgBwuEwGUKt7ecdDVNx3y8BdDUMpC58rbHMun8524b9RTLRy\n2rHVy9SWfwKBgBWP3oyZQ65JRa7/zTj5J+4SRLNygejN5cPwIqCM0y33NvVTYKc+\neN/fGw40018fEJkCGiuHUUT2QwMgqeXjxSL6qa4dP8MeDP55C+LH1/zr7kzDQnvc\n0MMh7adN6QHyy0PctT8m0YZ8QYraBnANZfAX1P9yXjF3xLYJDtKN1vwhAoGBAIYl\n21Zy7g5ki6p5OGXhbUj/zsghIcXHuxlQmkN2UWEc2W6zmYMupV6KjKoSZ9P3JYD5\nhqLQ8Wm7Vi8XorNIylLbkz76rwXSqXSLVB5lcoiKnWXknNAyMddkzkJT6Ys6Heyy\nY9Gh/N5dVxtCejcoDEbXDM4noB7sckAf41BodLtpAoGBAJmHC7NRWdiKB5O1qG/a\n5C3mQd2uUemf7htYY9XKn4sJJiIc+kZYrAa+XydfssCNs0hSke8I1lVofA+YrsOi\n/tgd0dwnAKBPglxxKJx79V/zRS7wG1US0Jujm/53a5gmP+KtKKx8a0/bNEBaMV3n\nII5WxBMVDTZ4OJkA5my0cA/2\n-----END PRIVATE KEY-----\n",
+  "client_email": "storage@poised-gateway-333214.iam.gserviceaccount.com",
+  "client_id": "104158896839479953783",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/storage%40poised-gateway-333214.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

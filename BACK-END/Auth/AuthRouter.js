@@ -6,6 +6,7 @@ import {
   creandoUsuarioController,
   confirmarCuentaController,
   LoginController,
+  validarSesionController,
 } from "./AuthController.js";
 import {
   validandoCrearUsuario,
@@ -18,6 +19,8 @@ import ExisteCuentaRegistradaGitHub from "../Validadores/ExisteCuentaRegistradaG
 import ValidarCodeFacebook from "../Validadores/ValidarCodeFacebook.js";
 import ObtenerDatosCuentaFacebook from "../Validadores/ObtenerDatosCuentaFacebook.js";
 import ExisteCuentaRegistradaFacebook from "../Validadores/ExisteCuentaRegistradaFacebook.js";
+
+import ValidarToken from "../Helpers/ValidarToken.js";
 
 const router = express.Router();
 
@@ -53,5 +56,7 @@ router.get(
   confirmarCuentaController
 );
 router.post("/usuario/iniciar-sesion", validandoLogin, LoginController);
+
+router.get("/validar-sesion", ValidarToken, validarSesionController);
 
 export default router;

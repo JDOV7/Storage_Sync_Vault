@@ -1,9 +1,10 @@
 import db from "../Config/db.js";
-import CajaFuertes from "../Models/CajaFuertes.js";
+// import CajaFuertes from "../Models/CajaFuertes.js";
 import {
   crearDirectorioRaiz,
   crearDirectorio,
 } from "../Objetos/ObjectosDAO.js";
+import registrarObjectoEnETH from "../Helpers/ETH/RegistrarObjectoEnETH.js";
 const crearCajaFuerte = async (IdUsuario = "", transaction) => {
   if (!transaction) {
     transaction = await db.transaction();
@@ -14,14 +15,17 @@ const crearCajaFuerte = async (IdUsuario = "", transaction) => {
       IdUsuarios: IdUsuario,
       TokenAcceso: "",
     };
-    const cajaFuerte = await CajaFuertes.create(cajaFuerteDatos, {
-      transaction,
-    });
+
+    // console.log(`crearCajaFuerte: -${cajaFuerteDatos.IdUsuarios}`);
+    // const cajaFuerte = await CajaFuertes.create(cajaFuerteDatos, {
+    //   transaction,
+    // });
     // throw new Error("");
 
     const datosDirRaiz = {
         IdObjetos: IdUsuario,
         IdUsuarios: IdUsuario,
+        Cid: IdUsuario,
         NombreVista: "root",
         UbicacionVista: "/root",
         UbicacionLogica: `/${IdUsuario}`,
@@ -51,18 +55,40 @@ const crearCajaFuerte = async (IdUsuario = "", transaction) => {
     const dicEliminados = await crearDirectorio(datosEliminados, transaction);
     const datosDir = {
       IdUsuario,
-      IdCajaFuertes: cajaFuerte.IdCajaFuertes,
+      // IdCajaFuertes: cajaFuerte.IdCajaFuertes,
       IdEliminado: dicEliminados.data.IdObjetos,
     };
-    console.log(datosDir);
-    await crearDirectorioRaiz(datosDir);
+
+    console.log(`cajaFuerteDatos.IdUsuarios: ${cajaFuerteDatos.IdUsuarios}`);
+    const registrarCarpetaRaizEnETH = await registrarObjectoEnETH(
+      cajaFuerteDatos.IdUsuarios,
+      cajaFuerteDatos.IdUsuarios
+    );
+    // const registrarCajaFuerteEnETH = await registrarObjectoEnETH(
+    //   cajaFuerteDatos.IdUsuarios,
+    //   datosDir.IdCajaFuertes
+    // );
+    const registrarCarpetaEliminadosEnETH = await registrarObjectoEnETH(
+      cajaFuerteDatos.IdUsuarios,
+      datosDir.IdEliminado
+    );
+    if (
+      !registrarCarpetaRaizEnETH ||
+      // !registrarCajaFuerteEnETH ||
+      !registrarCarpetaEliminadosEnETH
+    ) {
+      throw new Error("No se pudo registrar el objecto en ETH");
+    }
+
+    //Si quiero crear el folder real sin IPFS descomentar este codigo
+    // await crearDirectorioRaiz(datosDir);
 
     await transaction.commit();
     return {
       status: 200,
       message: "Caja fuerte creada",
       data: {
-        cajaFuerte: cajaFuerte.IdCajaFuertes,
+        // cajaFuerte: cajaFuerte.IdCajaFuertes,
         datosDir,
       },
     };

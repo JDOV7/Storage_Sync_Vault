@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import { hashSync, genSaltSync, compareSync } from "bcrypt";
 import db from "../Config/db.js";
 import creandoTokenAcceso from "../Helpers/CreandoTokenAcceso.js";
+import { enviarCorreo } from "../Helpers/EnviarCorreo.js";
 
 const Usuarios = db.define(
   "Usuarios",
@@ -18,13 +19,22 @@ const Usuarios = db.define(
     Apellidos: { type: DataTypes.STRING },
     TokenAcceso: { type: DataTypes.STRING },
     Activo: { type: DataTypes.BOOLEAN },
-    IdAutorizacion: { type: DataTypes.BOOLEAN },
-    ServidorAutorizacion: { type: DataTypes.BOOLEAN },
+    IdAutorizacion: { type: DataTypes.STRING },
+    ServidorAutorizacion: { type: DataTypes.STRING },
   },
   {
     hooks: {
       async beforeCreate(usuario) {
-        usuario.TokenAcceso = await creandoTokenAcceso(10);
+        if (usuario.ServidorAutorizacion != "Github") {
+          const token = await creandoTokenAcceso(10);
+          usuario.TokenAcceso = token;
+          await enviarCorreo({
+            Correo: usuario.Correo,
+            Nombres: usuario.Nombres,
+            TokenAcceso: token,
+          });
+        }
+
         usuario.Password = Usuarios.prototype.hashPassword(usuario.Password);
       },
     },

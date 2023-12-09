@@ -17,6 +17,7 @@ const ExisteElUsuarioCorreo = async (req, res, next) => {
     if (!buscarPorCorreo) {
       throw new UsuarioInvalidoError("El usuario no existe");
     }
+    req.usuarioAutorizado = buscarPorCorreo;
     return next();
   } catch (error) {
     console.log(error);

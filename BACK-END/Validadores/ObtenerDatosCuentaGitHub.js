@@ -8,6 +8,9 @@ const ObtenerDatosCuentaGitHub = async (req, res, next) => {
     } = req;
     // console.log(access_token);
     // return next();
+    console.log(
+      "------------------------ObtenerDatosCuentaGitHub--------------------"
+    );
     const respuesta = await obtenerDatosCuentaGithubServicio(access_token);
     if (!respuesta || respuesta?.status != 200) {
       throw new OperacionUsuarioNoValidaError(

@@ -13,7 +13,7 @@ const tipoDatos = ["uuid", "correo", "alpha", "numerico", "password"];
 const validandoCrearUsuario = async (req, res, next) => {
   try {
     const datos = [
-      { nombre: "IdPlanes", longMin: 36, longMax: 36, tipo: tipoDatos[0] },
+      // { nombre: "IdPlanes", longMin: 36, longMax: 36, tipo: tipoDatos[0] },
       { nombre: "Correo", longMin: 15, longMax: 60, tipo: tipoDatos[1] },
       { nombre: "Nombres", longMin: 3, longMax: 45, tipo: tipoDatos[2] },
       { nombre: "Apellidos", longMin: 3, longMax: 45, tipo: tipoDatos[2] },
@@ -58,7 +58,7 @@ const validandoCrearUsuario = async (req, res, next) => {
   } catch (error) {
     return res.status(400).json({
       status: 400,
-      message: error.message,
+      message: "Error al validar los datos",
     });
   }
 };

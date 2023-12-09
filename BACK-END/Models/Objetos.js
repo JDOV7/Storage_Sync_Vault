@@ -10,10 +10,11 @@ const Objetos = db.define(
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
     },
+    Cid: { type: DataTypes.STRING },
     NombreVista: { type: DataTypes.STRING },
     NombreLogico: { type: DataTypes.STRING },
-    UbicacionVista: { type: DataTypes.STRING },
-    UbicacionLogica: { type: DataTypes.STRING },
+    UbicacionVista: { type: DataTypes.TEXT("long") },
+    UbicacionLogica: { type: DataTypes.TEXT("long") },
     Padre: { type: DataTypes.STRING },
     EsDirectorio: { type: DataTypes.BOOLEAN },
     Mime: { type: DataTypes.STRING },
@@ -31,6 +32,10 @@ const Objetos = db.define(
             objecto.UbicacionLogica + "/" + objecto.IdObjetos;
           objecto.UbicacionVista =
             objecto.UbicacionVista + "/" + objecto.NombreVista;
+        }
+
+        if (objecto.EsDirectorio) {
+          objecto.Cid = objecto.IdObjetos;
         }
         objecto.NombreLogico = objecto.IdObjetos;
       },

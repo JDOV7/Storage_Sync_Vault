@@ -221,10 +221,10 @@ const recuperarArchivo = async (IdObjetos = "", IdUsuarios = "") => {
       },
       // attributes: ["IdObjetos", "UbicacionLogica"],
     });
-    const extencion =
-      archivo.NombreVista.split(".")[archivo.NombreVista.split(".").length - 1];
-    const lugarActual = `${__dirname}../../public/uploads${archivo.UbicacionLogica}.${extencion}`;
-    const lugarDestino = `${__dirname}../../public/uploads/${IdUsuarios}/${IdObjetos}.${extencion}`;
+    // const extencion =
+    //   archivo.NombreVista.split(".")[archivo.NombreVista.split(".").length - 1];
+    // const lugarActual = `${__dirname}../../public/uploads${archivo.UbicacionLogica}.${extencion}`;
+    // const lugarDestino = `${__dirname}../../public/uploads/${IdUsuarios}/${IdObjetos}.${extencion}`;
     // console.log(descendencia);
 
     const buscarCarpetaUbicacionEliminados =
@@ -276,7 +276,7 @@ const recuperarArchivo = async (IdObjetos = "", IdUsuarios = "") => {
       throw new EntidadNoExisteError("No se pudo restaurar el directorio");
     }
 
-    await moveSync(lugarActual, lugarDestino, { overwrite: true });
+    // await moveSync(lugarActual, lugarDestino, { overwrite: true });
 
     await transaction.commit();
     // await transaction.rollback();
@@ -285,8 +285,8 @@ const recuperarArchivo = async (IdObjetos = "", IdUsuarios = "") => {
       message: "Archivo recuperado",
       data: {
         archivo,
-        lugarActual,
-        lugarDestino,
+        // lugarActual,
+        // lugarDestino,
         buscarCarpetaUbicacionEliminados,
         moverObjectoBDUno,
         resDirDbEliminada,

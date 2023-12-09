@@ -4,6 +4,7 @@ import EntidadNoExisteError from "./Errores/EntidadNoExisteError.js";
 const ValidarPerteneceAlUsuario = async (req, res, next) => {
   try {
     console.log("ValidarPerteneceAlUsuario");
+    console.log(req.body);
     const { IdUsuarios } = req.usuario;
     let Padre = undefined;
     if (!Padre && req.body?.Padre) {

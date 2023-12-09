@@ -16,6 +16,7 @@ import {
   archivoPerteneceAlUsuario,
   archivoNoEliminado,
   moverArchivo,
+  obtenerArchivo,
 } from "./ObjectosDAO.js";
 
 const existeFolderServicio = async (IdObjetos = "") => {
@@ -197,6 +198,19 @@ const moverArchivoServicio = async (IdObjetos = "", Padre = "") => {
   }
 };
 
+const obtenerArchivoServicio = async (Cid = "") => {
+  try {
+    const respuesta = await obtenerArchivo(Cid);
+    return respuesta;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error en el servidor",
+    };
+  }
+};
+
 export {
   existeFolderServicio,
   folderNoEliminadoServicio,
@@ -215,4 +229,5 @@ export {
   archivoPerteneceAlUsuarioServicio,
   archivoNoEliminadoServicio,
   moverArchivoServicio,
+  obtenerArchivoServicio,
 };

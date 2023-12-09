@@ -1,4 +1,5 @@
 import { Op } from "sequelize";
+import { v4 } from "uuid";
 import {
   mkdir,
   // rmdir,
@@ -22,6 +23,7 @@ import {
   statSync,
   // cpSync,
 } from "node:fs";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { removeSync, moveSync } from "fs-extra/esm";
@@ -38,6 +40,7 @@ import EntidadNoCreadaError from "../Validadores/Errores/EntidadNoCreadaError.js
 import OperacionUsuarioNoValidaError from "../Validadores/Errores/OperacionUsuarioNoValidaError.js";
 
 import { moverDir } from "../Helpers/FileSystem.js";
+import axios from "axios";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -176,48 +179,62 @@ const folderPerteneceAlUsuario = async (IdObjetos = "", IdUsuarios = "") => {
 };
 
 const subiendoArchivos = async (datos = {}) => {
-  const IdUsuarios = datos.usuario.IdUsuarios;
-  const UbicacionVista = datos.headers.padre.datos.UbicacionVista;
-  const UbicacionLogica = datos.headers.padre.datos.UbicacionLogica;
-  const Padre =
-    UbicacionLogica.split("/")[UbicacionLogica.split("/").length - 1];
-  const EsDirectorio = false;
-  // const IdCajaFuertes = "";
-  const FechaCreacion = new Date();
-  const FechaActualizacion = FechaCreacion;
-  const EstaEliminado = false;
-  const archivos = [];
-  datos.files.forEach((archivo) => {
-    const dataArchivo = {
-      IdObjetos: archivo.filename.split(".")[0],
-      IdUsuarios,
-      // IdCajaFuertes,
-      UbicacionVista,
-      UbicacionLogica,
-      Padre,
-      EsDirectorio,
-      FechaCreacion,
-      FechaActualizacion,
-      NombreVista: archivo.originalname,
-      Mime: archivo.mimetype,
-      PesoMB: archivo.size,
-      EstaEliminado,
+  try {
+    console.log("----------------DAO subiendoArchivos-----------------");
+    // console.log(datos.files);
+    const IdUsuarios = datos.usuario.IdUsuarios;
+    const UbicacionVista = datos.headers.padre.datos.UbicacionVista;
+    const UbicacionLogica = datos.headers.padre.datos.UbicacionLogica;
+    const Padre =
+      UbicacionLogica.split("/")[UbicacionLogica.split("/").length - 1];
+    const EsDirectorio = false;
+    // const IdCajaFuertes = "";
+    const FechaCreacion = new Date();
+    const FechaActualizacion = FechaCreacion;
+    const EstaEliminado = false;
+    const archivos = [];
+    datos.files.forEach((archivo) => {
+      const ext = path.extname(archivo.originalname);
+      archivo.filename = `${v4()}${ext}`;
+      const dataArchivo = {
+        IdObjetos: archivo.filename.split(".")[0],
+        IdUsuarios,
+        Cid: archivo.cid,
+        // IdCajaFuertes,
+        UbicacionVista,
+        UbicacionLogica,
+        Padre,
+        EsDirectorio,
+        FechaCreacion,
+        FechaActualizacion,
+        NombreVista: archivo.originalname,
+        Mime: archivo.mimetype,
+        PesoMB: archivo.size,
+        EstaEliminado,
+      };
+      archivos.push(dataArchivo);
+    });
+
+    const subiendoArchivos = await Objetos.bulkCreate(archivos);
+    console.log(subiendoArchivos);
+
+    return {
+      status: 200,
+      message: "Archivos subidos correctamente",
+      data: {
+        subiendoArchivos,
+        // archivos,
+        // files: datos.files,
+      },
     };
-    archivos.push(dataArchivo);
-  });
-
-  const subiendoArchivos = await Objetos.bulkCreate(archivos);
-  console.log(subiendoArchivos);
-
-  return {
-    status: 200,
-    message: "Archivos subidos correctamente",
-    data: {
-      subiendoArchivos,
-      // archivos,
-      // files: datos.files,
-    },
-  };
+  } catch (error) {
+    console.log(error);
+    return {
+      status: 500,
+      message: "Error subir el contenido",
+      data: {},
+    };
+  }
 };
 
 const crearDirectorio = async (datos = {}, transaction) => {
@@ -348,13 +365,15 @@ const obtenerElementosDirectorio = async (datos = {}) => {
           "NombreLogico",
           "IdCajaFuertes",
           "IdUsuarios",
-          "UbicacionLogica",
+          // "UbicacionLogica",
           "Padre",
           "PesoMB",
           "EsDirectorio",
         ],
       },
     });
+
+    const folder = await Objetos.findByPk(IdObjetos);
     if (!elementos) {
       throw new EntidadNoExisteError("No existe este directorio");
     }
@@ -362,6 +381,7 @@ const obtenerElementosDirectorio = async (datos = {}) => {
       status: 200,
       message: "Elementos en el directorio",
       data: {
+        folder,
         elementos: elementos,
       },
     };
@@ -493,11 +513,13 @@ const eliminarDirectorio = async (datos = {}) => {
         transaction,
       }
     );
-    const moviendoDir = await cp(lugarActual, lugarDestino, {
-      recursive: true,
-      force: true,
-    });
-    await removeSync(lugarActual);
+
+    // -------------------- Descomentar si el almacenamiento no es IPFS
+    // const moviendoDir = await cp(lugarActual, lugarDestino, {
+    //   recursive: true,
+    //   force: true,
+    // });
+    // await removeSync(lugarActual);
 
     await transaction.commit();
     // await transaction.rollback();
@@ -682,11 +704,12 @@ const recuperarDirectorio = async (datos = {}) => {
       throw new EntidadNoExisteError("No se pudo restaurar el directorio");
     }
 
-    const moviendoDir = await cp(lugarActual, lugarDestino, {
-      recursive: true,
-      force: true,
-    });
-    await removeSync(lugarActual);
+    // ------------------- Descomentar para usar NO IPFS---------------------
+    // const moviendoDir = await cp(lugarActual, lugarDestino, {
+    //   recursive: true,
+    //   force: true,
+    // });
+    // await removeSync(lugarActual);
 
     await transaction.commit();
     return {
@@ -922,16 +945,17 @@ const moverFolder = async (datos = {}) => {
       }
     );
 
-    const lugarActual = `${__dirname}../../public/uploads${datosO.UbicacionLogica}/`;
-    const lugarDestino = `${__dirname}../../public/uploads${datosP.UbicacionLogica}/${datosO.IdObjetos}`;
-    console.log(lugarActual);
-    console.log(lugarDestino);
+    //--------------------Descomentar si se hace no IPFS
+    // const lugarActual = `${__dirname}../../public/uploads${datosO.UbicacionLogica}/`;
+    // const lugarDestino = `${__dirname}../../public/uploads${datosP.UbicacionLogica}/${datosO.IdObjetos}`;
+    // console.log(lugarActual);
+    // console.log(lugarDestino);
 
-    const moviendoDir = await cp(lugarActual, lugarDestino, {
-      recursive: true,
-      force: true,
-    });
-    await removeSync(lugarActual);
+    // const moviendoDir = await cp(lugarActual, lugarDestino, {
+    //   recursive: true,
+    //   force: true,
+    // });
+    // await removeSync(lugarActual);
 
     await transaction.commit();
     return {
@@ -1085,10 +1109,10 @@ const eliminarArchivo = async (IdObjetos = "", IdUsuarios = "") => {
     if (!buscarCarpetaUbicacionEliminados) {
       throw new EntidadNoExisteError("No se pudo eliminar la carpeta");
     }
-    const extencion =
-      archivo.NombreVista.split(".")[archivo.NombreVista.split(".").length - 1];
-    const lugarActual = `${__dirname}../../public/uploads${archivo.UbicacionLogica}.${extencion}`;
-    const lugarDestino = `${__dirname}../../public/uploads${buscarCarpetaUbicacionEliminados.UbicacionLogica}/${IdObjetos}.${extencion}`;
+    // const extencion =
+    //   archivo.NombreVista.split(".")[archivo.NombreVista.split(".").length - 1];
+    // const lugarActual = `${__dirname}../../public/uploads${archivo.UbicacionLogica}.${extencion}`;
+    // const lugarDestino = `${__dirname}../../public/uploads${buscarCarpetaUbicacionEliminados.UbicacionLogica}/${IdObjetos}.${extencion}`;
 
     // console.log(descendencia);
     console.log("---------------------MUEVO EL Archivo----------------------");
@@ -1147,7 +1171,7 @@ const eliminarArchivo = async (IdObjetos = "", IdUsuarios = "") => {
      *
      * **/
 
-    await moveSync(lugarActual, lugarDestino, { overwrite: true });
+    // await moveSync(lugarActual, lugarDestino, { overwrite: true });
 
     // const moviendoArchivo = await copyFile(
     //   lugarActual,
@@ -1164,8 +1188,8 @@ const eliminarArchivo = async (IdObjetos = "", IdUsuarios = "") => {
       data: {
         archivo,
         buscarCarpetaUbicacionEliminados,
-        lugarActual,
-        lugarDestino,
+        // lugarActual,
+        // lugarDestino,
         respuestaArchivoEliminado,
         eliminarArchivo,
       },
@@ -1288,10 +1312,10 @@ const moverArchivo = async (IdObjetos = "", Padre = "") => {
       throw new EntidadNoExisteError("No existe este archivo");
     }
 
-    const extencion =
-      archivo.NombreVista.split(".")[archivo.NombreVista.split(".").length - 1];
-    const lugarActual = `${__dirname}../../public/uploads${archivo.UbicacionLogica}.${extencion}`;
-    const lugarDestino = `${__dirname}../../public/uploads${carpetaPadreNuevo.UbicacionLogica}/${IdObjetos}.${extencion}`;
+    // const extencion =
+    //   archivo.NombreVista.split(".")[archivo.NombreVista.split(".").length - 1];
+    // const lugarActual = `${__dirname}../../public/uploads${archivo.UbicacionLogica}.${extencion}`;
+    // const lugarDestino = `${__dirname}../../public/uploads${carpetaPadreNuevo.UbicacionLogica}/${IdObjetos}.${extencion}`;
 
     // console.log(descendencia);
     console.log("---------------------MUEVO EL Archivo----------------------");
@@ -1340,7 +1364,8 @@ const moverArchivo = async (IdObjetos = "", Padre = "") => {
      *
      * **/
 
-    await moveSync(lugarActual, lugarDestino, { overwrite: true });
+    // -------------KITAR comentario para usar no IPFS
+    // await moveSync(lugarActual, lugarDestino, { overwrite: true });
 
     // const moviendoArchivo = await copyFile(
     //   lugarActual,
@@ -1354,7 +1379,7 @@ const moverArchivo = async (IdObjetos = "", Padre = "") => {
     return {
       status: 200,
       message: "mover Archivo",
-      data: { lugarActual, lugarDestino, moverObjectoBDUno, archivoAct },
+      data: { moverObjectoBDUno, archivoAct },
     };
   } catch (error) {
     console.log(error);
@@ -1375,6 +1400,54 @@ const moverArchivo = async (IdObjetos = "", Padre = "") => {
     return {
       status,
       message,
+    };
+  }
+};
+
+const obtenerArchivo = async (Cid = "") => {
+  try {
+    let url = `http://127.0.0.1:8080/ipfs/${Cid}`;
+
+    const response = await axios.get(url, {
+      responseType: "stream",
+    });
+
+    const tipoArchivo = response.headers["content-type"];
+    const destino = `./public/uploads/${Cid}.pdf`;
+
+    await response.data.pipe(await fs.createWriteStream(destino));
+    return {
+      status: 200,
+      message: "Archivo ",
+      data: {
+        Cid,
+        tipoArchivo,
+        // blob,
+        // file: fileRes,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    let status = 500,
+      message = "Error en el servidor";
+
+    if (error instanceof EntidadNoCreadaError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof EntidadNoExisteError) {
+      status = 400;
+      message = error.message;
+    }
+    if (error instanceof OperacionUsuarioNoValidaError) {
+      status = 400;
+      message = error.message;
+    }
+
+    return {
+      status,
+      message,
+      data: {},
     };
   }
 };
@@ -1401,4 +1474,5 @@ export {
   archivoPerteneceAlUsuario,
   archivoNoEliminado,
   moverArchivo,
+  obtenerArchivo,
 };

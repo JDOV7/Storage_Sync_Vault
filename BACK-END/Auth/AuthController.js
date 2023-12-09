@@ -44,19 +44,26 @@ const validarCodeGithubController = async (req, res) => {
 
 const crearOIniciarCuentaGithubController = async (req, res) => {
   try {
+    console.log(
+      "-------------------crearOIniciarCuentaGithubController-------------------"
+    );
     const {
       body: {
         existeCuenta: { status },
       },
     } = req;
     if (status && status == 404) {
+      console.log(
+        "-----------------------crearOIniciarCuentaGithubController: proceso para crear la cuenta--------------"
+      );
       let {
         body: {
           perfil: { email, login, id },
         },
       } = req;
-      const IdPlanes = "3e366d3d-54ea-11ee-a058-0250b7d1102c";
-      const datos = { email, login, id, IdPlanes };
+      // const IdPlanes = "3e366d3d-54ea-11ee-a058-0250b7d1102c";
+      // const datos = { email, login, id, IdPlanes };
+      const datos = { email, login, id };
       // console.log(datos);
       const respuestaCrearCuentaGithub = await crearCuentaGitHubServicio(datos);
       console.log(respuestaCrearCuentaGithub);
@@ -66,6 +73,9 @@ const crearOIniciarCuentaGithubController = async (req, res) => {
         data: { respuestaCrearCuentaGithub },
       });
     } else if (status && status == 200) {
+      console.log(
+        "-----------------------crearOIniciarCuentaGithubController: proceso para iniciar--------------"
+      );
       const {
         body: {
           perfil: { id },
@@ -91,7 +101,7 @@ const crearOIniciarCuentaGithubController = async (req, res) => {
       return res.status(200).json({
         status: 200,
         message: "/github/iniciar-sesion",
-        data: { respuestaLoginGithub },
+        data: respuestaLoginGithub.data,
       });
     } else {
       throw new OperacionUsuarioNoValidaError("Error con la cuenta");
@@ -126,8 +136,9 @@ const crearOIniciarCuentaFacebookController = async (req, res) => {
           perfil: { email, first_name: Nombres, last_name: Apellidos, id },
         },
       } = req;
-      const IdPlanes = "3e366d3d-54ea-11ee-a058-0250b7d1102c";
-      const datos = { email, Nombres, Apellidos, id, IdPlanes };
+      // const IdPlanes = "3e366d3d-54ea-11ee-a058-0250b7d1102c";
+      // const datos = { email, Nombres, Apellidos, id, IdPlanes };
+      const datos = { email, Nombres, Apellidos, id };
       // console.log(datos);
       const respuestaCrearCuenta = await crearCuentaFacebookServicio(datos);
       console.log(respuestaCrearCuenta);
@@ -187,8 +198,9 @@ const crearOIniciarCuentaFacebookController = async (req, res) => {
 
 const creandoUsuarioController = async (req, res) => {
   try {
-    const { IdPlanes, Correo, Nombres, Apellidos, Password } = req.body;
-    const usuario = { IdPlanes, Correo, Nombres, Apellidos, Password };
+    const { Correo, Nombres, Apellidos, Password } = req.body;
+    const usuario = { Correo, Nombres, Apellidos, Password };
+    console.log(req.body);
     const respuesta = await creandoUsuarioServicio(usuario);
     if (respuesta.status !== 200) {
       return res.status(respuesta.status).json({
@@ -245,6 +257,24 @@ const LoginController = async (req, res) => {
   }
 };
 
+const validarSesionController = async (req, res) => {
+  try {
+    const { usuario } = req;
+
+    if (!usuario) {
+      throw new Error("No existe el usuario");
+    }
+
+    return res.status(200).json(usuario);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: 500,
+      message: error.message,
+    });
+  }
+};
+
 export {
   validarCodeGithubController,
   crearOIniciarCuentaGithubController,
@@ -252,4 +282,5 @@ export {
   creandoUsuarioController,
   confirmarCuentaController,
   LoginController,
+  validarSesionController,
 };

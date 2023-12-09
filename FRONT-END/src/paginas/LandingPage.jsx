@@ -17,7 +17,10 @@ const LandingPage = () => {
   return (
     <>
       <div className="bg-slate-900">
-        <HeaderLandingPage></HeaderLandingPage>
+        <HeaderLandingPage
+          btnTexto={"Inicia Sesion"}
+          url={"/login"}
+        ></HeaderLandingPage>
       </div>
       <div className="py-20 px-4 bg-slate-900">
         <div className="pt-20 pb-10 text-center text-6xl font-extrabold text-white">

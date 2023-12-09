@@ -13,6 +13,7 @@ import EntidadNoCreadaError from "../Validadores/Errores/EntidadNoCreadaError.js
 
 import creandoTokenAcceso from "../Helpers/CreandoTokenAcceso.js";
 import generarJWT from "../Helpers/GenerarJWT.js";
+import { enviarCorreo } from "../Helpers/EnviarCorreo.js";
 // correo@gmail.com
 
 const validarCodeGithub = async (code = "") => {
@@ -134,18 +135,19 @@ const existeCuentaRegistradaGitHub = async (
 const crearCuentaGitHub = async (datos = {}) => {
   const transaction = await db.transaction();
   try {
+    console.log("-----------------------crearCuentaGitHub----------------");
     const {
-      IdPlanes,
+      // IdPlanes,
       email: Correo,
       login: Nombres,
       id: IdAutorizacion,
     } = datos;
-
+    console.log(IdAutorizacion);
     const crearUsuarioGitHubDatos = {
-      IdPlanes,
+      // IdPlanes,
       Correo,
       Nombres,
-      Activo: false,
+      Activo: true,
       IdAutorizacion,
       Password: "",
       ServidorAutorizacion: "Github",
@@ -201,6 +203,10 @@ const crearCuentaGitHub = async (datos = {}) => {
 
 const verificarSiLaCuentaEstaConfirmadaGithub = async (IdAutorizacion = "") => {
   try {
+    console.log(
+      "---------------------verificarSiLaCuentaEstaConfirmadaGithub---------------------- "
+    );
+    console.log(IdAutorizacion);
     const buscarUsuario = await Usuarios.findOne({
       where: {
         [Op.and]: [
@@ -210,6 +216,7 @@ const verificarSiLaCuentaEstaConfirmadaGithub = async (IdAutorizacion = "") => {
         ],
       },
     });
+    console.log(buscarUsuario);
 
     if (!buscarUsuario) {
       throw new TokenInvalidoError("Cuenta no autorizada");
@@ -266,6 +273,7 @@ const loginGithub = async (IdAutorizacion = "") => {
       message: "Logeado Existosamente",
       data: {
         tokenJWT,
+        IdUsuarios: buscarUsuario.IdUsuarios,
       },
     };
   } catch (error) {
@@ -402,7 +410,7 @@ const crearCuentaFacebook = async (datos = {}) => {
   const transaction = await db.transaction();
   try {
     const {
-      IdPlanes,
+      // IdPlanes,
       email: Correo,
       Nombres,
       Apellidos,
@@ -410,7 +418,7 @@ const crearCuentaFacebook = async (datos = {}) => {
     } = datos;
 
     const crearUsuarioDatos = {
-      IdPlanes,
+      // IdPlanes,
       Correo,
       Nombres,
       Apellidos,
@@ -558,6 +566,7 @@ const loginFacebook = async (IdAutorizacion = "") => {
 const creandoUsuario = async (usuario = {}) => {
   let transaction = await db.transaction();
   try {
+    // const { IdPlanes, Correo, Nombres, Apellidos, Password } = usuario;
     const { IdPlanes, Correo, Nombres, Apellidos, Password } = usuario;
     const usuarioBuscar = await Usuarios.findOne({
       where: {
@@ -575,7 +584,7 @@ const creandoUsuario = async (usuario = {}) => {
     }
 
     const crearUsuarioDatos = {
-      IdPlanes,
+      // IdPlanes,
       Correo,
       Nombres,
       Apellidos,
@@ -598,7 +607,6 @@ const creandoUsuario = async (usuario = {}) => {
         "Ocurrio un error, no se pudo crear el usuario"
       );
     }
-
     // await transaction.commit();
     return {
       status: 200,
@@ -607,6 +615,8 @@ const creandoUsuario = async (usuario = {}) => {
     };
   } catch (error) {
     // console.log(error);
+    console.log("-------------------creandoUsuario-----------------");
+    console.log(error);
     let status = 500;
     let message = "Error en el servidor";
     if (error instanceof UsuarioDuplicadoError) {
@@ -700,6 +710,7 @@ const Login = async (usuario = {}) => {
       message: "Logeado Existosamente",
       data: {
         tokenJWT,
+        IdUsuarios: buscarUsuario.IdUsuarios,
       },
     };
   } catch (error) {

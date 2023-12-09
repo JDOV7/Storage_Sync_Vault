@@ -7,6 +7,7 @@ const ExisteCuentaRegistradaGitHub = async (req, res, next) => {
         perfil: { id, email },
       },
     } = req;
+    console.log("----------------------ExisteCuentaRegistradaGitHub-------------------");
     console.log(req.body);
     const respuesta = await existeCuentaRegistradaGitHubServicio(id, email);
     console.log(respuesta);

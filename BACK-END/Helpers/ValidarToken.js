@@ -8,13 +8,19 @@ export default async function ValidarToken(req, res, next) {
   let respuesta = {};
   try {
     const token = req.headers.authorization;
+    console.log("----------------------------------ValidarToken--------------");
+    console.log(token);
     if (!token) {
-      throw new TokenInvalidoError("Error, no se pudo completar esta accion");
+      throw new TokenInvalidoError(
+        "Error, no se pudo completar esta accion, no existe el token"
+      );
     }
 
     const verificar = jwt.verify(token, process.env.JWT_SECRET);
     if (!verificar.TokenAcceso) {
-      throw new TokenInvalidoError("Error, no se pudo completar esta accion");
+      throw new TokenInvalidoError(
+        "Error, no se pudo completar esta accion, el token db no existe"
+      );
     }
     const { TokenAcceso } = verificar;
     const usuario = await Usuarios.findOne({

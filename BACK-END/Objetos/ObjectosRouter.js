@@ -9,11 +9,15 @@ import {
   obtenerInformacionArchivoController,
   eliminarArchivoController,
   moverArchivoController,
+  obtenerArchivoController,
+  obtenerObjectosEliminados,
+  arbolDeCarpetasController,
+  descargarCarpeta,
 } from "./ObjectosController.js";
 
 import { recuperarArchivoController } from "../ObjectosEliminados/ObjectosEliminadosController.js";
 
-import { subirArchivos } from "../Helpers/Multer.js";
+// import { subirArchivos } from "../Helpers/Multer.js";
 import ValidarToken from "../Helpers/ValidarToken.js";
 import {
   ValidarPerteneceAlUsuario,
@@ -28,12 +32,20 @@ import ArchivoEliminado from "../Validadores/ArchivoEliminado.js";
 import PadreFolderExiste from "../Validadores/PadreFolderExiste.js";
 import PadreFolderNoEliminado from "../Validadores/PadreFolderNoEliminado.js";
 import PadreFolderPerteneceAlUsuario from "../Validadores/PadreFolderPerteneceAlUsuario.js";
+import subirArchivos from "../Helpers/Multer.js";
+import {
+  validarFolderPadrePerteneceAlUsuarioETH,
+  validarFolderParamPerteneceAlUsuarioETH,
+  validarFolderHeaderPadrePerteneceAlUsuarioETH,
+} from "../Validadores/ETH/ValidarFolderPerteneceAlUsuarioETH.js";
+import { validarArchivoPerteneceAlUsuarioETH } from "../Validadores/ETH/ValidarArchivoPerteneceAlUsuarioETH.js";
 
 const router = express.Router();
 
 router.post(
   "/folder",
   ValidarToken,
+  validarFolderPadrePerteneceAlUsuarioETH,
   ValidarPerteneceAlUsuario,
   crearDirectorioController
 );
@@ -41,6 +53,7 @@ router.post(
 router.get(
   "/folder/:IdObjetos",
   ValidarToken,
+  validarFolderParamPerteneceAlUsuarioETH,
   // ValidarPerteneceAlUsuarioHeader,
   ValidarPerteneceAlUsuario,
   obtenerElementosDirectorioController
@@ -49,6 +62,7 @@ router.get(
 router.delete(
   "/folder/:IdObjetos",
   ValidarToken,
+  validarFolderParamPerteneceAlUsuarioETH,
   ValidarPerteneceAlUsuario,
   eliminarDirectorioController
 );
@@ -56,6 +70,7 @@ router.delete(
 router.put(
   "/folder/recuperar/:IdObjetos",
   ValidarToken,
+  validarFolderParamPerteneceAlUsuarioETH,
   ValidarAunPerteneceAlUsuario,
   validarEsElDirectorioPrincipalEliminado,
   recuperarDirectorioController
@@ -64,6 +79,8 @@ router.put(
 router.post(
   "/folder/mover/:IdObjetos",
   ValidarToken,
+  validarFolderPadrePerteneceAlUsuarioETH,
+  validarFolderParamPerteneceAlUsuarioETH,
   ValidarPerteneceAlUsuarioParams,
   ValidarPerteneceAlUsuario,
   moverFolderController
@@ -72,8 +89,10 @@ router.post(
 router.post(
   "/archivos",
   ValidarToken,
+  validarFolderHeaderPadrePerteneceAlUsuarioETH,
   // ValidarPerteneceAlUsuarioHeader,
   ValidarPerteneceAlUsuario,
+  // subirArchivos,
   subirArchivos,
   subiendoArchivosController
 );
@@ -84,6 +103,7 @@ router.get(
   ArchivoExiste,
   ArchivoNoEliminado,
   ArchivoPerteneceAlUsuario,
+  validarArchivoPerteneceAlUsuarioETH,
   obtenerInformacionArchivoController
 );
 
@@ -93,6 +113,7 @@ router.delete(
   ArchivoExiste,
   ArchivoNoEliminado,
   ArchivoPerteneceAlUsuario,
+  validarArchivoPerteneceAlUsuarioETH,
   eliminarArchivoController
 );
 
@@ -102,19 +123,38 @@ router.put(
   ArchivoExiste,
   ArchivoEliminado,
   ArchivoPerteneceAlUsuario,
+  validarArchivoPerteneceAlUsuarioETH,
   recuperarArchivoController
 );
 
 router.post(
   "/archivos/:IdObjetos",
   ValidarToken,
+  validarFolderPadrePerteneceAlUsuarioETH,
   ArchivoExiste,
   ArchivoNoEliminado,
   ArchivoPerteneceAlUsuario,
+  validarArchivoPerteneceAlUsuarioETH,
   PadreFolderExiste,
   PadreFolderNoEliminado,
   PadreFolderPerteneceAlUsuario,
   moverArchivoController
 );
+
+router.get(
+  "/archivo/:IdObjetos",
+  ValidarToken,
+  ArchivoExiste,
+  ArchivoNoEliminado,
+  ArchivoPerteneceAlUsuario,
+  validarArchivoPerteneceAlUsuarioETH,
+  obtenerArchivoController
+);
+
+router.get("/archivos-eliminados", ValidarToken, obtenerObjectosEliminados);
+
+router.get("/arbol-carpetas", ValidarToken, arbolDeCarpetasController);
+
+router.get("/descargar/carpeta/:IdObjetos", ValidarToken, descargarCarpeta);
 
 export default router;

@@ -11,6 +11,8 @@ import routerAuth from "./Auth/AuthRouter.js";
 import routerCajaFuertes from "./CajaFuertes/CajaFuertesRouter.js";
 import routerObjectos from "./Objetos/ObjectosRouter.js";
 import routerObjectosCompartidos from "./ObjectosCompartidos/ObjectosCompartidosRouter.js";
+import routerGoogle from "./ObjectosGoogle/ObjectosGoogleRouter.js";
+import routerRespaldo from "./Respaldo/RespaldoRouter.js";
 import db from "./Config/db.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -21,7 +23,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// app.use(express.static("public"));
+app.use(express.static("public"));
 
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "public/logs/access.log"),
@@ -60,6 +62,8 @@ app.use("/usuarios", routerUsuario);
 app.use("/caja-fuerte", routerCajaFuertes);
 app.use("/objectos", routerObjectos);
 app.use("/objectos-compartidos", routerObjectosCompartidos);
+app.use("/objectos-google", routerGoogle);
+app.use("/respaldos", routerRespaldo);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
