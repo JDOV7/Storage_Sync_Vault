@@ -5,7 +5,7 @@
 1. [🚀 Informacion General](#-informacion-general)
 2. [💻 Tecnologias](#-tecnologias)
 3. [🛠️ Instalacion](#%EF%B8%8F-instalacion)
-4. [✒️ Autores](#-Autores)
+4. [✒️ Autores](#%EF%B8%8F-autores)
 
 ## 🚀 Informacion General
 
