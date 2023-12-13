@@ -22,21 +22,21 @@ const Compartir = () => {
 
   return (
     <>
-      <div className="bg-slate-900">
+      <div className="bg-cyan-50">
         <HeaderLandingPage
           btnTexto={"Inicia Sesion"}
           url={"/login"}
         ></HeaderLandingPage>
       </div>
-      <div className="w-full bg-slate-900">
+      <div className="w-full bg-cyan-50">
         <div>
           <h1 className="  pt-32 px-40 text-cyan-500 text-2xl text-center font-semibold">
             COMPARTIR
           </h1>
-          <h1 className="  py-8 px-40 text-center text-6xl font-extrabold text-white">
+          <h1 className="  py-8 px-40 text-center text-6xl font-extrabold text-black">
             Comparte de forma segura con quien quieras y donde quieras
           </h1>
-          <p className="text-white text-center text-xl p-8">
+          <p className="text-black text-center text-xl p-8">
             Comparte carpetas y archivos con colegas y amigos de forma segura y
             sencilla
           </p>
@@ -44,7 +44,7 @@ const Compartir = () => {
 
         <div className="grid grid-cols-3 py-14">
           <div className="col-span-1">
-            <h1 className="text-4xl text-center text-white font-bold px-4">
+            <h1 className="text-4xl text-center text-black font-bold px-4">
               Comparte tus archivos y carpetas con quien quieras
             </h1>
           </div>

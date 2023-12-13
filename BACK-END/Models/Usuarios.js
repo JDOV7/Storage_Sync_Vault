@@ -21,6 +21,7 @@ const Usuarios = db.define(
     Activo: { type: DataTypes.BOOLEAN },
     IdAutorizacion: { type: DataTypes.STRING },
     ServidorAutorizacion: { type: DataTypes.STRING },
+    direccion: { type: DataTypes.STRING },
   },
   {
     hooks: {

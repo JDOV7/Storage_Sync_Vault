@@ -181,7 +181,7 @@ const HeaderLandingPage = ({ btnTexto, url }) => {
                                   </Link>
                                 </div>
 
-                                <div className="pb-8">
+                                {/* <div className="pb-8">
                                   <a
                                     href="#"
                                     className="my-2  py-1 border-b-2  md:mx-2"
@@ -225,7 +225,7 @@ const HeaderLandingPage = ({ btnTexto, url }) => {
                                       </div>
                                     </div>
                                   </a>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>

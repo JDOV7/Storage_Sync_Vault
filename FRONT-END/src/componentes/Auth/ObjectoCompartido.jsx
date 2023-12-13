@@ -3,6 +3,9 @@ import carpeta from "../../../public/img/app/carpeta.png";
 import imagen from "../../../public/img/app/imagen.png";
 import pdf from "../../../public/img/app/pdf.png";
 import recuperarIMG from "../../../public/img/app/recuperar.png";
+import excelIMG from "../../../public/img/app/excel.png";
+import docIMG from "../../../public/img/app/doc.png";
+import pptIMG from "../../../public/img/app/ppt.png";
 import useAuth from "../../hooks/useAuth";
 import mensajeError from "../../Mensajes/MensajeError";
 
@@ -30,6 +33,15 @@ function ObjectoCompartido({ objecto }) {
       case "application/pdf":
         icono = pdf;
         break;
+      case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        icono = excelIMG;
+        break;
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        icono = docIMG;
+        break;
+      case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        icono = pptIMG;
+        break;
       default:
         break;
     }
@@ -55,11 +67,11 @@ function ObjectoCompartido({ objecto }) {
       const bArchivo = await descargarCarpeta(idObjecto, NombreVista);
       console.log(idObjecto);
       if (!bArchivo) {
-        throw new Error("No se pudo descargar el archivo");
+        throw new Error("No se pudo descargar el folder");
       }
     } catch (error) {
       console.log(error);
-      mensajeError("No se pudo descargar el archivo", "intentalo mas tarde");
+      mensajeError("No se pudo descargar el folder", "intentalo mas tarde");
     }
   };
 

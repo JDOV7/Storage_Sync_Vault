@@ -72,18 +72,18 @@ const StoragePagina = () => {
 
   return (
     <>
-      <div className="bg-slate-900">
+      <div className="bg-cyan-50">
         <HeaderLandingPage
           btnTexto={"Inicia Sesion"}
           url={"/login"}
         ></HeaderLandingPage>
       </div>
-      <div className="w-full bg-slate-900">
+      <div className="w-full bg-cyan-50">
         <div>
           <h1 className="  pt-32 px-40 text-cyan-500 text-2xl text-center font-semibold">
             ALMACENAMIENTO EN LA NUBE
           </h1>
-          <h1 className="  py-8 px-40 text-center text-6xl font-extrabold text-white">
+          <h1 className="  py-8 px-40 text-center text-6xl font-extrabold text-black">
             Almacena, administra y comparte de forma segura tus datos en línea
           </h1>
         </div>
@@ -93,7 +93,7 @@ const StoragePagina = () => {
 
         <div className="grid grid-cols-3 py-28">
           <div className="col-span-1">
-            <h1 className="text-4xl text-center text-white font-bold px-4">
+            <h1 className="text-4xl text-center text-black font-bold px-4">
               Lo que nuestros clientes quieren
             </h1>
           </div>

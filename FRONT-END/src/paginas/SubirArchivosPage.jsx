@@ -33,6 +33,11 @@ export default function SubirArchivosPage() {
   };
 
   const handlerSubmit = async () => {
+    if (!files || files.length <= 0) {
+      mensajeError("Seleciona por lo menos un archivo", "Intentalo mas tarde");
+      return;
+    }
+
     const bControl = await subirArchivos(files, IdObjetos);
     if (!bControl) {
       mensajeError("No se pudo iniciar sesion", "Intentalo mas tarde");

@@ -22,8 +22,8 @@ const LandingPage = () => {
           url={"/login"}
         ></HeaderLandingPage>
       </div>
-      <div className="py-20 px-4 bg-slate-900">
-        <div className="pt-20 pb-10 text-center text-6xl font-extrabold text-white">
+      <div className="py-20 px-4 bg-cyan-50">
+        <div className="pt-20 pb-10 text-center text-6xl font-extrabold text-black">
           <h1>Privacidad en línea para todos</h1>
         </div>
         <div className="grid grid-cols-5">
@@ -33,7 +33,7 @@ const LandingPage = () => {
             </div>
           </div>
 
-          <div className="col-span-3 text-white">
+          <div className="col-span-3 text-black font-black">
             <div className="flex items-center justify-center">
               <p className="py-24 text-xl">
                 La privacidad no es una opción con Storage Sync Vault, es un
@@ -45,24 +45,30 @@ const LandingPage = () => {
         </div>
 
         <div className="text-center">
-          <input
+          {/* <input
             type="submit"
             value="Prueba Storage Sync Vault gratis"
             className="bg-cyan-500 w-full py-3 px-10 rounded-xl text-black uppercase font-bold mt-5 hover:cursor-pointer hover:bg-cyan-700  md:w-auto "
-          />
+          /> */}
+          <Link
+            to={"/crear-cuenta"}
+            className="bg-cyan-500 w-full py-3 px-10 rounded-xl text-black uppercase font-bold mt-5 hover:cursor-pointer hover:bg-cyan-700  md:w-auto "
+          >
+            Crea tu cuenta ahora
+          </Link>
         </div>
       </div>
       <PorqueEscogerSSV></PorqueEscogerSSV>
-      <div className="py-20 px-4 bg-slate-900">
+      {/* <div className="py-20 px-4 bg-slate-900">
         <h1 className="text-5xl text-center text-white font-bold py-6">
           Compara Storage Sync Vault con otros
         </h1>
-      </div>
-      <div className="grid grid-cols-9 bg-slate-900 p-6">
+      </div> */}
+      {/* <div className="grid grid-cols-9 bg-slate-900 p-6">
         {datos.map((libro, index) => {
           return <CompetenciaCard key={index} props={libro}></CompetenciaCard>;
         })}
-      </div>
+      </div> */}
     </>
   );
 };

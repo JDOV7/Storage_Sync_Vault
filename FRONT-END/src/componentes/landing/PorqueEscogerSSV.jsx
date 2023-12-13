@@ -6,8 +6,8 @@ import dispositivos from "../../../public/img/sensible.png";
 
 const PorqueEscogerSSV = () => {
   return (
-    <div className="bg-slate-900">
-      <h1 className="text-5xl text-center text-white font-bold py-16">
+    <div className="bg-cyan-50">
+      <h1 className="text-5xl text-center text-black font-bold py-16">
         ¿Por qué elegir Storage Sync Vault?
       </h1>
 
@@ -15,11 +15,11 @@ const PorqueEscogerSSV = () => {
         <div className="grid grid-cols-3">
           <div className="col-span-2">
             <div className=" p-10 text-center">
-              <h1 className="text-3xl text-left text-white font-bold">
+              <h1 className="text-3xl text-left text-black font-bold">
                 Nunca te quedes sin espacio de almacenamiento
               </h1>
 
-              <p className="text-xl text-left text-white  py-4">
+              <p className="text-xl text-left text-black  py-4">
                 ¿Necesitas mucho espacio de almacenamiento? No hay problema.
                 Tenemos una gama de planes competitivos hasta 4 TB . Si
                 necesitas aún más espacio, contrata un plan Pro Flexi o
@@ -43,11 +43,11 @@ const PorqueEscogerSSV = () => {
           </div>
           <div className="col-span-2">
             <div className=" p-10 text-center">
-              <h1 className="text-3xl text-left text-white font-bold">
+              <h1 className="text-3xl text-left text-black font-bold">
                 Comparte archivos con quien quieras
               </h1>
 
-              <p className="text-xl text-left text-white  py-4">
+              <p className="text-xl text-left text-black  py-4">
                 Comparte fácilmente tus archivos de Storage Sync Vault con
                 amigos y colegas. Y al compartir, todavía tienes el control.
                 Puedes dar acceso completo o de solo lectura a tus archivos, y
@@ -63,11 +63,11 @@ const PorqueEscogerSSV = () => {
         <div className="grid grid-cols-3">
           <div className="col-span-2">
             <div className=" p-10 text-center">
-              <h1 className="text-3xl text-left text-white font-bold">
+              <h1 className="text-3xl text-left text-black font-bold">
                 Trabaja sin problemas en todos los dispositivos
               </h1>
 
-              <p className="text-xl text-left text-white  py-4">
+              <p className="text-xl text-left text-black  py-4">
                 Accede fácilmente a tus archivos en la nube desde la web. Y, si
                 sincronizas o realizas un backup de los datos desde tu equipo a
                 Storage Sync Vault, todos los cambios se replicarán

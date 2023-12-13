@@ -9,6 +9,7 @@ export const handler = async (event) => {
     };
     return response;
   } catch (error) {
+    console.log(error);
     return {
       statusCode: 500,
       message: "no se pudo enviar el correo",

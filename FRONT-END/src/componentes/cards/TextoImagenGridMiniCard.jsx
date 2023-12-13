@@ -6,7 +6,7 @@ const TextoImagenGridMiniCard = ({ datos, col }) => {
   console.log(datos);
   return (
     <>
-      <div className={`text-white col-span-${col} p-8`}>
+      <div className={`text-black col-span-${col} p-8`}>
         <div>
           <img src={imagen} alt="" />
           <h1 className="text-center text-2xl p-2 font-extrabold">{titulo}</h1>

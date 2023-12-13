@@ -4,12 +4,14 @@ config();
 
 const enviarCorreo = async (datos) => {
   console.log("coreeooooooooo");
+  console.log(datos);
   const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
   const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
   var defaultClient = SibApiV3Sdk.ApiClient.instance;
-
+  const key = process.env.API_KEY_CORREO;
+  console.log(key);
   var apiKey = defaultClient.authentications["api-key"];
-  apiKey.apiKey = process.env.API_KEY_CORREO;
+  apiKey.apiKey = key;
   const { Correo, Nombres, TokenAcceso } = datos;
   const sendSmtpEmail2 = {
     sender: {
@@ -35,17 +37,17 @@ const enviarCorreo = async (datos) => {
   };
   // throw new Error("x");
 
-  const respuesta = await apiInstance.sendTransacEmail(sendSmtpEmail2);
+  // const respuesta = await apiInstance.sendTransacEmail(sendSmtpEmail2);
 
-  //   await apiInstance.sendTransacEmail(sendSmtpEmail2).then(
-  //     function (data) {
-  //       console.log("API called successfully. Returned data: ");
-  //     },
-  //     function (error) {
-  //       console.log("---------------enviarCorreo---------------");
-  //       console.error(error);
-  //     }
-  //   );
+    await apiInstance.sendTransacEmail(sendSmtpEmail2).then(
+      function (data) {
+        console.log("API called successfully. Returned data: ");
+      },
+      function (error) {
+        console.log("---------------enviarCorreo---------------");
+        console.error(error);
+      }
+    );
 };
 
 export { enviarCorreo };

@@ -383,6 +383,28 @@ const descargarArchivoCompartido = async (request, response) => {
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       );
       respuesta = resGoogle;
+    } else if (
+      archivo.Mime ==
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) {
+      const resGoogle = await descargarArchivoGoogle(archivo.Cid, "stream");
+      // console.log(resGoogle);
+      response.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      );
+      respuesta = resGoogle;
+    } else if (
+      archivo.Mime ==
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    ) {
+      const resGoogle = await descargarArchivoGoogle(archivo.Cid, "stream");
+      // console.log(resGoogle);
+      response.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      );
+      respuesta = resGoogle;
     } else {
       let url = `http://127.0.0.1:8080/ipfs/${archivo.Cid}`;
 

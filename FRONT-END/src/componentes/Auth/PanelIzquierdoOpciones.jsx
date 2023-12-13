@@ -33,6 +33,9 @@ function PanelIzquierdoOpciones({
         title: "Nombre folder",
         input: "text",
       });
+      if (!nombre || nombre.length <= 0) {
+        return;
+      }
 
       const bCarpetaCreada = await crearFolder(nombre, IdObjetos);
 

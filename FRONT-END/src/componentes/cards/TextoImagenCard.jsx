@@ -16,11 +16,11 @@ const TextoImagenCard = ({ datos }) => {
               </div>
               <div className="col-span-2">
                 <div className=" p-10 text-center">
-                  <h1 className="text-3xl text-left text-white font-bold">
+                  <h1 className="text-3xl text-left text-black font-bold">
                     {titulo}
                   </h1>
 
-                  <p className="text-xl text-left text-white  py-4">{texto}</p>
+                  <p className="text-xl text-left text-black  py-4">{texto}</p>
                 </div>
               </div>
             </div>
@@ -30,11 +30,11 @@ const TextoImagenCard = ({ datos }) => {
             <div className="grid grid-cols-3">
               <div className="col-span-2">
                 <div className=" p-10 text-center">
-                  <h1 className="text-3xl text-left text-white font-bold">
+                  <h1 className="text-3xl text-left text-black font-bold">
                     {titulo}
                   </h1>
 
-                  <p className="text-xl text-left text-white  py-4">{texto}</p>
+                  <p className="text-xl text-left text-black  py-4">{texto}</p>
                 </div>
               </div>
               <div className="col-span-1">

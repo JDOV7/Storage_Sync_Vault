@@ -296,6 +296,28 @@ const obtenerArchivoController = async (req, res) => {
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       );
       respuesta = resGoogle;
+    } else if (
+      obtenerArchivo.Mime ==
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) {
+      const resGoogle = await descargarArchivoGoogle(Cid, "stream");
+      // console.log(resGoogle);
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      );
+      respuesta = resGoogle;
+    } else if (
+      obtenerArchivo.Mime ==
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    ) {
+      const resGoogle = await descargarArchivoGoogle(Cid, "stream");
+      // console.log(resGoogle);
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      );
+      respuesta = resGoogle;
     } else {
       let url = `http://127.0.0.1:8080/ipfs/${Cid}`;
 
@@ -508,6 +530,34 @@ const descargarCarpeta = async (request, response) => {
 
           blob = await Buffer.from(resGoogle);
           objeto.UbicacionVista += ".xlsx";
+          console.log(objeto.UbicacionVista);
+          console.log(blob);
+        } else if (
+          objeto.Mime ==
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+          const resGoogle = await descargarArchivoGoogle(
+            objeto.Cid,
+            "arraybuffer"
+          );
+          // console.log(resGoogle);
+
+          blob = await Buffer.from(resGoogle);
+          objeto.UbicacionVista += ".docx";
+          console.log(objeto.UbicacionVista);
+          console.log(blob);
+        } else if (
+          objeto.Mime ==
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        ) {
+          const resGoogle = await descargarArchivoGoogle(
+            objeto.Cid,
+            "arraybuffer"
+          );
+          // console.log(resGoogle);
+
+          blob = await Buffer.from(resGoogle);
+          objeto.UbicacionVista += ".pptx";
           console.log(objeto.UbicacionVista);
           console.log(blob);
         } else {

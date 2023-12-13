@@ -88,6 +88,34 @@ const respaldarFolder = async (request, response) => {
           objeto.UbicacionVista += ".xlsx";
           console.log(objeto.UbicacionVista);
           console.log(blob);
+        } else if (
+          objeto.Mime ==
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+          const resGoogle = await descargarArchivoGoogle(
+            objeto.Cid,
+            "arraybuffer"
+          );
+          // console.log(resGoogle);
+
+          blob = await Buffer.from(resGoogle);
+          objeto.UbicacionVista += ".docx";
+          console.log(objeto.UbicacionVista);
+          console.log(blob);
+        } else if (
+          objeto.Mime ==
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        ) {
+          const resGoogle = await descargarArchivoGoogle(
+            objeto.Cid,
+            "arraybuffer"
+          );
+          // console.log(resGoogle);
+
+          blob = await Buffer.from(resGoogle);
+          objeto.UbicacionVista += ".pptx";
+          console.log(objeto.UbicacionVista);
+          console.log(blob);
         } else {
           let url = `http://127.0.0.1:8080/ipfs/${objeto.Cid}`;
 
@@ -176,6 +204,30 @@ const respaldarArchivo = async (request, response) => {
 
       respuesta = resGoogle;
       nombre = archivo.IdObjetos + ".xlsx";
+    } else if (
+      archivo.Mime ==
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) {
+      const resGoogle = await descargarArchivoGoogle(
+        archivo.Cid,
+        "arraybuffer"
+      );
+      // console.log(resGoogle);
+
+      respuesta = resGoogle;
+      nombre = archivo.IdObjetos + ".docx";
+    } else if (
+      archivo.Mime ==
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    ) {
+      const resGoogle = await descargarArchivoGoogle(
+        archivo.Cid,
+        "arraybuffer"
+      );
+      // console.log(resGoogle);
+
+      respuesta = resGoogle;
+      nombre = archivo.IdObjetos + ".pptx";
     } else {
       let url = `http://127.0.0.1:8080/ipfs/${archivo.Cid}`;
 
@@ -243,6 +295,16 @@ const descargarFolder = async (request, response) => {
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
       ) {
         extension = ".xlsx";
+      } else if (
+        objecto.Mime ==
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ) {
+        extension = ".docx";
+      } else if (
+        objecto.Mime ==
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      ) {
+        extension = ".pptx";
       } else {
         const indexPunto = objecto.NombreVista.indexOf(".");
         extension = objecto.NombreVista.substring(indexPunto);

@@ -12,6 +12,8 @@ import {
 } from "./AuthServicio.js";
 import OperacionUsuarioNoValidaError from "../Validadores/Errores/OperacionUsuarioNoValidaError.js";
 import generarJWT from "../Helpers/GenerarJWT.js";
+import Usuarios from "../Models/Usuarios.js";
+import { Op } from "sequelize";
 
 const validarCodeGithubController = async (req, res) => {
   try {
@@ -123,6 +125,50 @@ const crearOIniciarCuentaGithubController = async (req, res) => {
   }
 };
 
+const validarCuentaGithub = async (request, response) => {
+  try {
+    const {
+      params: { IdUsuarios, direccion },
+    } = request;
+
+    const buscarUsuario = await Usuarios.findOne({
+      where: {
+        [Op.and]: [
+          { IdUsuarios },
+          { ServidorAutorizacion: "Github" },
+          { Activo: false },
+        ],
+      },
+    });
+    console.log(buscarUsuario);
+    if (!buscarUsuario) {
+      throw new Error("No se pudo validar el usuario de github");
+    }
+
+    await Usuarios.update(
+      { Activo: true, direccion },
+      {
+        where: {
+          Activo: false,
+          IdUsuarios,
+        },
+      }
+    );
+    return response.status(200).json({
+      status: 200,
+      message: "validarCuentaGithub exitosa",
+      data: {},
+    });
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json({
+      status: 500,
+      message: "Error al validar la cuenta de github",
+      data: {},
+    });
+  }
+};
+
 const crearOIniciarCuentaFacebookController = async (req, res) => {
   try {
     const {
@@ -198,8 +244,8 @@ const crearOIniciarCuentaFacebookController = async (req, res) => {
 
 const creandoUsuarioController = async (req, res) => {
   try {
-    const { Correo, Nombres, Apellidos, Password } = req.body;
-    const usuario = { Correo, Nombres, Apellidos, Password };
+    const { Correo, Nombres, Apellidos, Password, direccion } = req.body;
+    const usuario = { Correo, Nombres, Apellidos, Password, direccion };
     console.log(req.body);
     const respuesta = await creandoUsuarioServicio(usuario);
     if (respuesta.status !== 200) {
@@ -278,6 +324,7 @@ const validarSesionController = async (req, res) => {
 export {
   validarCodeGithubController,
   crearOIniciarCuentaGithubController,
+  validarCuentaGithub,
   crearOIniciarCuentaFacebookController,
   creandoUsuarioController,
   confirmarCuentaController,

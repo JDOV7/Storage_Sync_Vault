@@ -237,24 +237,59 @@ const crearArchivoGoogle = async (request, response) => {
     const auth = new JWT({
       scopes: [
         "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/documents",
+        "https://www.googleapis.com/auth/presentations",
         "https://www.googleapis.com/auth/drive",
       ],
       keyFile: "./ObjectosGoogle/poised-gateway-333214-48018d3182ea.json",
     });
 
-    const service = google.sheets({ version: "v4", auth });
+    let idFile;
     const resource = {
       properties: {
         title: NombreVista,
       },
     };
-    const spreadsheet = await service.spreadsheets.create({
-      resource,
-      // fields: "spreadsheetId",
-    });
+    if (TipoArchivo == 1) {
+      const service = google.sheets({ version: "v4", auth });
+      const spreadsheet = await service.spreadsheets.create({
+        resource,
+        // fields: "spreadsheetId",
+      });
 
-    console.log(spreadsheet.data);
-    const { spreadsheetId } = spreadsheet.data;
+      console.log(spreadsheet.data);
+      const { spreadsheetId } = spreadsheet.data;
+      idFile = spreadsheetId;
+    } else if (TipoArchivo == 2) {
+      const service = google.docs({ version: "v1", auth });
+
+      const doc = await service.documents.create({
+        resource: {
+          title: NombreVista,
+        },
+      });
+      console.log(doc);
+      console.log(doc.data);
+
+      // console.log(doc.data.body);
+      const { documentId } = doc.data;
+      idFile = documentId;
+      console.log(`https://docs.google.com/document/d/${idFile}/edit`);
+    } else if (TipoArchivo == 3) {
+      const service = google.slides({ version: "v1", auth });
+
+      const slide = await service.presentations.create({
+        title: NombreVista,
+      });
+      console.log(slide);
+      console.log(slide.data);
+
+      // console.log(doc.data.body);
+      const { presentationId } = slide.data;
+      idFile = presentationId;
+      console.log(`https://docs.google.com/presentation/d/${idFile}/edit`);
+    }
+
     // console.log(`Spreadsheet ID: ${spreadsheet.data.spreadsheetId}`);
 
     const serviceDrive = google.drive({ version: "v3", auth });
@@ -264,7 +299,7 @@ const crearArchivoGoogle = async (request, response) => {
         role: "writer",
         emailAddress: Correo, // 'user@partner.com', nadia.portugal04@gmail.com,jesusmarzo7@gmail.com
       },
-      fileId: spreadsheetId,
+      fileId: idFile,
       fields: "id",
     });
 
@@ -272,7 +307,7 @@ const crearArchivoGoogle = async (request, response) => {
 
     const nuevoArchivo = {
       IdObjetosNuevo,
-      Cid: spreadsheetId,
+      Cid: idFile,
       NombreVista,
       NombreLogico: IdObjetosNuevo,
       UbicacionVista,
@@ -317,7 +352,7 @@ const crearArchivoGoogle = async (request, response) => {
     return response.status(201).json({
       status: 201,
       message: "Excel creado",
-      data: { nuevoArchivo, spreadsheet: spreadsheet.data },
+      data: { nuevoArchivo, idFile },
     });
   } catch (error) {
     console.log(error);
@@ -333,18 +368,23 @@ const descargarArchivoGoogle = async (cid, tipo) => {
   try {
     const auth = new JWT({
       scopes: [
-        "https://www.googleapis.com/auth/spreadsheets",
+        // "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive",
       ],
       keyFile: "./ObjectosGoogle/poised-gateway-333214-48018d3182ea.json",
+    });
+
+    const buscarMime = await Objetos.findOne({
+      where: {
+        Cid: cid,
+      },
     });
 
     const service = google.drive({ version: "v3", auth });
     const file = await service.files.export(
       {
         fileId: cid,
-        mimeType:
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        mimeType: buscarMime.Mime,
       },
       { responseType: tipo }
     );

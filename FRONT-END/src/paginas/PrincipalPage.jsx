@@ -51,6 +51,7 @@ function PrincipalPage() {
       ></PanelIzquierdoOpciones>
       <Header tipoDeBarra={1}></Header>
       <div className="py-20 px-52">
+        <h1 className="text-4xl font-black text-black text-center">Mis Cosas</h1>
         <TablaObjectos
           objectos={objectos}
           ubicacionVista={ubicacionVista}

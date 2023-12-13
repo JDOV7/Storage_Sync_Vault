@@ -76,6 +76,7 @@ const obtenerDatosCuentaGithub = async (access_token = "") => {
       },
     };
   } catch (error) {
+    console.log(error);
     return {
       status: 500,
       message: "Error en el servidor",
@@ -147,7 +148,7 @@ const crearCuentaGitHub = async (datos = {}) => {
       // IdPlanes,
       Correo,
       Nombres,
-      Activo: true,
+      Activo: false,
       IdAutorizacion,
       Password: "",
       ServidorAutorizacion: "Github",
@@ -173,7 +174,7 @@ const crearCuentaGitHub = async (datos = {}) => {
     return {
       status: 201,
       message: "Usuario creado correctamente",
-      data: {},
+      data: { crearUsuario },
     };
   } catch (error) {
     console.log(error);
@@ -567,7 +568,8 @@ const creandoUsuario = async (usuario = {}) => {
   let transaction = await db.transaction();
   try {
     // const { IdPlanes, Correo, Nombres, Apellidos, Password } = usuario;
-    const { IdPlanes, Correo, Nombres, Apellidos, Password } = usuario;
+    const { IdPlanes, Correo, Nombres, Apellidos, Password, direccion } =
+      usuario;
     const usuarioBuscar = await Usuarios.findOne({
       where: {
         Correo,
@@ -590,6 +592,7 @@ const creandoUsuario = async (usuario = {}) => {
       Apellidos,
       Password,
       Activo: false,
+      direccion,
     };
 
     const crearUsuario = await Usuarios.create(crearUsuarioDatos, {

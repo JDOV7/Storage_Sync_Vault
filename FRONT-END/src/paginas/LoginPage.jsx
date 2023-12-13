@@ -9,13 +9,30 @@ import mensajeError from "../Mensajes/MensajeError";
 import clienteAxios from "../../config/axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { useEth } from "../context/EthContext";
+import Web3 from "web3";
+
+// crear archivo
+// mostrarne en la tabla
+// descargar archivo
+// respaldar archivo
+// descar folder
+// respaldar folder
+// descar archivo compartido
+// icon papelera
+
+// 0101891056
+
+// 5VrFwpEvklAlabe-383
+
+// 0101891056
 
 const Login = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { setAuth } = useAuth();
-  const [Correo, setCorreo] = useState("correo2@gmail.com");
-  const [Password, setPassword] = useState("12345678_*-fgHGDb+");
+  const [Correo, setCorreo] = useState("");
+  const [Password, setPassword] = useState("");
   const [code, setCode] = useState();
   const scope = "user:email";
   const clienteId = import.meta.env.VITE_CLIENT_ID_GITHUB;
@@ -23,39 +40,62 @@ const Login = () => {
   const url = `https://github.com/login/oauth/authorize?client_id=${clienteId}&scope=${scope}`;
   console.log(url);
 
+  const {
+    state: { contract, accounts },
+  } = useEth();
+
   useEffect(() => {
     console.log(searchParams.get("code"));
     const codeRes = searchParams.get("code");
     setCode(searchParams.get("code"));
     const iniciar = async () => {
       if (codeRes && codeRes.length >= 1) {
-        await crear_iniciarSesionGithub(codeRes);
+        Swal.fire({
+          title: "Confirmar",
+          text: "Haz click para iniciar o crear tu cuenta con Github",
+          icon: "success",
+        });
       }
     };
 
     iniciar();
-  }, []);
+  }, [contract]);
 
   const crear_iniciarSesionGithub = async (code) => {
     try {
+      console.log(contract);
       const url = `/auth/github/crear-iniciar-sesion?code=${code}`;
       const { data } = await clienteAxios.get(url);
-      // if (!data) {
-      //   throw new Error("Error, no se pudo iniciar sesion");
-      // }
-      // const {
-      //   data: { tokenJWT, IdUsuarios },
-      // } = data;
+
       console.log(data);
 
       if (data.status == 201) {
         console.log(
           "--------------------crear_iniciarSesionGithub: cuenta creada-------------"
         );
+        const direccion = await accounts[0];
+        console.log(`---------------direccion: ${direccion}-----------------`);
+        console.log(contract);
+        const respuesta = await contract.methods.makePayment().send({
+          from: direccion, // Cambia esto según la cuenta que desees
+          value: await Web3.utils.toWei("2", "ether"),
+        });
+        console.log(
+          "-----------------------respuesta.transactionHash-------------"
+        );
+        console.log(await respuesta.transactionHash);
+        const urlValidar =
+          await `/auth/github/validar-cuenta/${data.data.respuestaCrearCuentaGithub.data.crearUsuario.IdUsuarios}/${direccion}`;
+        console.log(`-----------url: ${urlValidar}----------------`);
+        const responseActualizar = await clienteAxios.get(urlValidar);
+
+        console.log(responseActualizar);
         Swal.fire({
-          title: "¡Cuenta creada correctamente!",
+          title: "Cuenta creada correctamente",
           text: "Ya puedes iniciar sesion",
           icon: "success",
+        }).then((e) => {
+          window.location.href = "http://localhost:5173/login";
         });
       } else if (data.status == 200) {
         console.log(
@@ -78,18 +118,15 @@ const Login = () => {
           text: "Haz iniciado sesion",
           icon: "success",
         }).then(navigate(`/app/${IdUsuarios}`));
+      } else {
+        throw new Error("Error al iniciar o crear cuenta");
       }
-      // setAuth(data);
-      // console.log(tokenJWT);
-      // window.localStorage.setItem("jwt-storage-sync-vault", tokenJWT);
-      // Swal.fire({
-      //   title: "¡Sesion iniciada correctamente!",
-      //   text: "Haz iniciado sesion",
-      //   icon: "success",
-      // }).then(navigate(`/app/${IdUsuarios}`));
     } catch (error) {
       console.log(error);
-      // mensajeError("No se pudo iniciar sesion", "Intentalo mas tarde");
+      mensajeError(
+        "Ocurrio un error al crear o iniciar sesion con Github",
+        "Intentalo mas tarde"
+      );
     }
   };
 
@@ -194,30 +231,32 @@ const Login = () => {
                 </div>
                 <div className="flex items-center justify-center align-middle pb-4">
                   <div className="">
-                    <button>
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        if (
+                          !searchParams.get("code") ||
+                          searchParams.get("code").length == 0
+                        ) {
+                          window.location.href = url;
+                        } else {
+                          console.log(
+                            "--------------existe code-----------------"
+                          );
+                          const respuesta = await crear_iniciarSesionGithub(
+                            await searchParams.get("code")
+                          );
+                          console.log("---------------pasando la validacion");
+                        }
+                      }}
+                    >
                       {/* <div className="flex items-start justify-start bg-red-300">
                         <img src={githubIMG} alt="" className="px-2" />
                         <p className="font-extrabold">GitHub</p>
                       </div> */}
-                      <a
-                        href={url}
-                        // target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-start justify-start"
-                      >
-                        <img src={githubIMG} alt="" className="px-2" />
-                        <p className="font-extrabold">GitHub</p>
-                      </a>
-                    </button>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center align-middle">
-                  <div className="">
-                    <button>
-                      <div className="flex items-start justify-start ">
-                        <img src={facebookIMG} alt="" className="px-2" />
-                        <p className="font-extrabold">Facebok</p>
-                      </div>
+
+                      <img src={githubIMG} alt="" className="px-2" />
+                      <p className="font-extrabold">GitHub</p>
                     </button>
                   </div>
                 </div>

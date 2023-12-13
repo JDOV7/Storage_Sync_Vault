@@ -14,6 +14,8 @@ import moverseIMG from "../../../public/img/app/moverse.png";
 import compartirIMG from "../../../public/img/app/compartir.png";
 import descargasIMG from "../../../public/img/app/descargas.png";
 import excelIMG from "../../../public/img/app/excel.png";
+import docIMG from "../../../public/img/app/doc.png";
+import pptIMG from "../../../public/img/app/ppt.png";
 import respaldoIMG from "../../../public/img/app/respaldo.png";
 
 function ObjectoElemento({ objecto, funcActualizarTabla }) {
@@ -98,6 +100,12 @@ function ObjectoElemento({ objecto, funcActualizarTabla }) {
       case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         icono = excelIMG;
         break;
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        icono = docIMG;
+        break;
+      case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        icono = pptIMG;
+        break;
       default:
         break;
     }
@@ -121,6 +129,27 @@ function ObjectoElemento({ objecto, funcActualizarTabla }) {
         );
         return;
       }
+      if (
+        Mime ==
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ) {
+        console.log(Cid);
+        window.open(`https://docs.google.com/document/d/${Cid}/edit`, "_blank");
+        return;
+      }
+
+      if (
+        Mime ==
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+      ) {
+        console.log(Cid);
+        window.open(
+          `https://docs.google.com/presentation/d/${Cid}/edit`,
+          "_blank"
+        );
+        return;
+      }
+
       const bArchivo = await obtenerArchivo(idObjecto);
       console.log(idObjecto);
       if (!bArchivo) {

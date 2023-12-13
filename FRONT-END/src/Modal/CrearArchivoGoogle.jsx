@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import excelIMG from "../../public/img/app/excel.png";
+import docIMG from "../../public/img/app/doc.png";
+import pptIMG from "../../public/img/app/ppt.png";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import mensajeError from "../Mensajes/MensajeError";
 
 function CrearArchivoGoogle({
   modal,
@@ -26,6 +30,17 @@ function CrearArchivoGoogle({
   }, [auth]);
 
   const crearDocumentoGoogleFunc = async () => {
+    if (!(TipoArchivo == 1 || TipoArchivo == 2 || TipoArchivo == 3)) {
+      mensajeError("Seleciona algun tipo de archivo", "vuelve a intentarlo");
+      return;
+    }
+
+    if (NombreVista.length <= 0) {
+      mensajeError("El archivo debe tener nombre", "vuelve a intentarlo");
+      return;
+    }
+
+    // return;
     const respuesta = await crearDocumentoGoogle(
       IdObjetos,
       NombreVista,
@@ -33,11 +48,21 @@ function CrearArchivoGoogle({
     );
 
     if (respuesta) {
-      window.alert("Creado");
+      Swal.fire({
+        title: "Archivo creado correctamente",
+        icon: "success",
+      }).then(async (e) => {
+        await funcActualizarTabla(IdObjetos);
+      });
     } else {
-      window.alert("No Creado");
+      Swal.fire({
+        title: "El archivo no se creo",
+        text: "Intentalo mas tarde",
+        icon: "error",
+      }).then(async (e) => {
+        await funcActualizarTabla(IdObjetos);
+      });
     }
-    await funcActualizarTabla(IdObjetos);
   };
 
   return (
@@ -85,7 +110,7 @@ function CrearArchivoGoogle({
                       <div className="flex items-center justify-center">
                         <div className="bg-cyan-100 p-5 rounded-3xl shadow-2xl font-sans">
                           <div className="flex items-center justify-center">
-                            <img src={excelIMG} alt="" />
+                            <img src={docIMG} alt="" />
                           </div>
                         </div>
                         <input
@@ -104,7 +129,7 @@ function CrearArchivoGoogle({
                       <div className="flex items-center justify-center">
                         <div className="bg-cyan-100 p-5 rounded-3xl shadow-2xl font-sans">
                           <div className="flex items-center justify-center">
-                            <img src={excelIMG} alt="" />
+                            <img src={pptIMG} alt="" />
                           </div>
                         </div>
                         <input

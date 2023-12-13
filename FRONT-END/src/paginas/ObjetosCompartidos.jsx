@@ -27,7 +27,9 @@ function ObjetosCompartidos() {
       ></PanelIzquierdoOpciones>
       <Header tipoDeBarra={1}></Header>
       <div className="py-20 px-52">
-        <h1>ObjetosCompartidos</h1>
+        <h1 className="text-4xl font-black text-black text-center">
+          Compartidos Conmigo
+        </h1>
 
         <TablaObjectosCompartidos></TablaObjectosCompartidos>
       </div>

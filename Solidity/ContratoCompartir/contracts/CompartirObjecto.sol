@@ -53,31 +53,31 @@ contract CompartirObjecto {
         return false;
     }
 
-    function eliminarAcceso(
-        string memory idPropietario,
-        string memory _cid,
-        string memory idConsultor
-    ) public returns (bool) {
-        string[] storage personasAutorizadas = mapArchivos[idPropietario][_cid];
+    // function eliminarAcceso(
+    //     string memory idPropietario,
+    //     string memory _cid,
+    //     string memory idConsultor
+    // ) public returns (bool) {
+    //     string[] storage personasAutorizadas = mapArchivos[idPropietario][_cid];
 
-        if (personasAutorizadas.length == 0) {
-            return false;
-        }
+    //     if (personasAutorizadas.length == 0) {
+    //         return false;
+    //     }
 
-        for (uint256 i = 0; i < personasAutorizadas.length; i++) {
-            if (
-                keccak256(abi.encodePacked(personasAutorizadas[i])) ==
-                keccak256(abi.encodePacked(idConsultor))
-            ) {
-                if (i != personasAutorizadas.length - 1) {
-                    personasAutorizadas[i] = personasAutorizadas[
-                        personasAutorizadas.length - 1
-                    ];
-                }
-                personasAutorizadas.pop();
-                return true;
-            }
-        }
-        return false;
-    }
+    //     for (uint256 i = 0; i < personasAutorizadas.length; i++) {
+    //         if (
+    //             keccak256(abi.encodePacked(personasAutorizadas[i])) ==
+    //             keccak256(abi.encodePacked(idConsultor))
+    //         ) {
+    //             if (i != personasAutorizadas.length - 1) {
+    //                 personasAutorizadas[i] = personasAutorizadas[
+    //                     personasAutorizadas.length - 1
+    //                 ];
+    //             }
+    //             personasAutorizadas.pop();
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 }

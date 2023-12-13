@@ -7,6 +7,7 @@ import {
   confirmarCuentaController,
   LoginController,
   validarSesionController,
+  validarCuentaGithub,
 } from "./AuthController.js";
 import {
   validandoCrearUsuario,
@@ -32,6 +33,8 @@ router.get(
   ExisteCuentaRegistradaGitHub,
   crearOIniciarCuentaGithubController
 );
+
+router.get("/github/validar-cuenta/:IdUsuarios/:direccion", validarCuentaGithub);
 
 //https://www.facebook.com/v18.0/dialog/oauth?client_id=1101541470821727&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth%2Ffacebook%2Fcrear-iniciar-sesion&auth_type=rerequest&scope=email
 

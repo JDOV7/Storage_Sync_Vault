@@ -187,7 +187,7 @@ const TreeNode = ({ nodeId, nodeName, children, onNodeClick }) => {
         htmlFor={`node-${nodeId}`}
         className="flex items-center cursor-pointer w-full"
       >
-        <span onClick={toggleNode} className="w-full  hover:bg-red-300">
+        <span onClick={toggleNode} className="w-full  hover:bg-cyan-300">
           {nodeName}
         </span>
       </label>
@@ -310,7 +310,11 @@ const MoverObjecto = ({
       console.log(respuesta);
       setModal(false);
       if (respuesta == true) {
-        Swal.fire("Movido Correctamente");
+        Swal.fire({
+          title: "Carpeta Actualizada",
+          text: "La carpeta se cambio de lugar",
+          icon: "success",
+        });
         await funcActualizarTabla(paramIdObjecto);
       } else {
         console.log(respuesta.response.data);
@@ -343,7 +347,11 @@ const MoverObjecto = ({
       console.log(respuesta);
       setModal(false);
       if (respuesta == true) {
-        Swal.fire("Movido Correctamente");
+        Swal.fire({
+          title: "Carpeta Actualizada",
+          text: "El archivo se cambio de lugar",
+          icon: "success",
+        });
         await funcActualizarTabla(paramIdObjecto);
       } else {
         throw new Error("Error");
@@ -368,7 +376,7 @@ const MoverObjecto = ({
             </div>
             <div className="relative p-6 flex-auto">
               <div className="max-w-md mx-auto m-8 p-2">
-                <div className="bg-cyan-200 font-black  rounded shadow p-4  h-60 overflow-x-auto w-full">
+                <div className="bg-cyan-100 font-black  rounded shadow p-4  h-60 overflow-x-auto w-full">
                   {arbol != undefined ? (
                     <>
                       <Tree treeData={arbol} onNodeClick={handleNodeClick} />
@@ -408,7 +416,7 @@ const MoverObjecto = ({
               </button>
             </div>
             <div className=" flex items-center justify-center pb-5">
-              {folder}*|*{folderId}
+              {folder}
             </div>
           </div>
         </div>

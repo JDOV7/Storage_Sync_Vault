@@ -52,17 +52,17 @@ async function main() {
     // const respuesta = await contrato.methods.owner().call();
     // console.log(respuesta)
 
-    // await contrato.methods.makePayment().send({
-    //   from: "0x876F1eb45AB6B5b0A466dd14b0cbb692Be2Fb944", // Cambia esto según la cuenta que desees
-    //   value: web3.utils.toWei("2", "ether"),
-    // });
+    await contrato.methods.makePayment().send({
+      from: "0x876F1eb45AB6B5b0A466dd14b0cbb692Be2Fb944", // Cambia esto según la cuenta que desees
+      value: web3.utils.toWei("2", "ether"),
+    });
 
-    const cliente = "0x973E1B06A807E1Dd5B698Cc0a94F52388eC7B1f4";
-    const estaCuentaEstaSuscribta = await contrato.methods
-      .hasPaid(cliente)
-      .call();
-    console.log(cliente);
-    console.log(estaCuentaEstaSuscribta);
+    // const cliente = "0x973E1B06A807E1Dd5B698Cc0a94F52388eC7B1f4";
+    // const estaCuentaEstaSuscribta = await contrato.methods
+    //   .hasPaid(cliente)
+    //   .call();
+    // console.log(cliente);
+    // console.log(estaCuentaEstaSuscribta);
 
     // const respuesta2 = await contrato.methods.getCID("id1","cid1").call();
     // console.log(respuesta2);

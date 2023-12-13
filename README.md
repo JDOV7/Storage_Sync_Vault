@@ -5,6 +5,7 @@
 1. [🚀 Informacion General](#-informacion-general)
 2. [💻 Tecnologias](#-tecnologias)
 3. [🛠️ Instalacion](#%EF%B8%8F-instalacion)
+4. [✒️ Autores](#-Autores)
 
 ## 🚀 Informacion General
 
@@ -15,13 +16,13 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 
 </p>
 
-<div align="justify">
+
 
 🔓**Funcionalidades publicas:**
 
-- Crear cuenta ( _Usando Github, Facebook y Local_  )
-- Confirmar cuenta por medio de un token enviado al email( _Pendiente el envio del email, pero si sirve el endpoint_ )
-- Inicio de sesion ( _Usando Github, Facebook y Local_ )
+- Crear cuenta ( _Usando Github y Local_  )
+- Confirmar cuenta por medio de un token enviado al email()
+- Inicio de sesion ( _Usando Github y Local_ )
 
 🔐**Funcionalidades privadas( _Una vez confirmada la cuenta y haber iniciado sesion_ )**:
 
@@ -31,14 +32,17 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 - Recuperar folders eliminados( _Los folders restaurados se mueven al directorio raiz /_ )
 - Mover de lugar los folders
 - Compartir folders con otros usuarios para su lectura
+- Respaldar folder y su contenido
 - Subir archivos a los folders
 - Obtener informacion de un archivo
 - Eliminar archivo
 - Recuperar archivo
 - Mover archivo
 - Compartir archivo con otros usuarios para su lectura
+- Respaldar archivo
+- Crear archivos Word, Excel y Power Point
 
-</div>
+
 
 ## 💻 Tecnologias
 
@@ -53,9 +57,16 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 <img src="https://img.shields.io/badge/Sequelize-52B0E7?style=for-the-badge&logo=Sequelize&logoColor=white" alt="Sequelize" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/OAuth%202.0-badge?style=for-the-badge&logo=auth0&logoColor=%23EB5424&labelColor=black&color=black" alt="OAuth 2.0" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />&nbsp;&nbsp;
-<img src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white" alt="Facebook" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white" alt="JWT" />&nbsp;&nbsp;
-<img src="https://img.shields.io/badge/AWS_RDS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" alt="AWS RDS" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/AWS_LAMBDA-FF9900?style=for-the-badge&logo=awslambda&logoColor=white" alt="AWS Lambda" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/AWS_Api_Gateway-FF9900?style=for-the-badge&logo=amazonapigateway&logoColor=white" alt="AWS API Gateway" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/AWS S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white" alt="AWS S3" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/google_api_sheets-34A853?style=for-the-badge&logo=amazonapigateway&logoColor=white" alt="Google api Sheets" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/google_api_docs-4285F4?style=for-the-badge&logo=googledocs&logoColor=white" alt="Google api Docs" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/google_api_slides-FBBC04?style=for-the-badge&logo=googleslides&logoColor=white" alt="Google api Slides" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/google_api_drive-4285F4?style=for-the-badge&logo=googledrive&logoColor=white" alt="Google api drive" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/ethereum-3C3C3D?style=for-the-badge&logo=ethereum&logoColor=white" alt="Ethereum" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/ipfs-65C2CB?style=for-the-badge&logo=ipfs&logoColor=white" alt="IPFS" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />&nbsp;&nbsp;
 <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />&nbsp;&nbsp;
@@ -75,7 +86,6 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 - **Vite**: Version *
 - **React**: Version *
 - **Tailwind CSS**: Version *
-<p align="center">🚧 En construccion 🚧</p>
 
 💾**Bases de datos**:
 
@@ -83,7 +93,14 @@ Storage Sync Vault es un servicio de almacenamiento de archivos( <i>Drive, OneDr
 
 ☁️**Cloud**:
 
-- **AWS RDS**
+- **AWS Lambda**
+- **AWS S3**
+- **AWS Api Gateway**
+- **Google Api Sheets**
+- **Google Api Docs**
+- **Google Api Slides**
+- **Google Api Drive**
+- **Github Api Oauth2**
 
 ## 🛠️ Instalacion
 
@@ -120,18 +137,37 @@ DB_NAME=
 DB_USER=
 DB_PASS=
 
+RED_IPFS=
+RED_ETH=
+
+CONTRACT_ABI=
+ACCOUNT_PRIVATE_KEY_ETH=
+CONTRACT_ADDRESS_ETH=
+
+CONTRACT_ABI_COMPARTIR_OBJECTO=
+ACCOUNT_PRIVATE_KEY_ETH_COMPARTIR_OBJECTO=
+CONTRACT_ADDRESS_ETH_COMPARTIR_OBJECTO=
+
+CONTRACT_ABI_ARCHIVOS_GOOGLE=
+ACCOUNT_PRIVATE_KEY_ETH_ARCHIVOS_GOOGLE=
+CONTRACT_ADDRESS_ETH_ARCHIVOS_GOOGLE=
+
 CLIENT_ID_GITHUB=
 CLIENT_SECRET_GITHUB=
 URL_ACCESS_TOKEN_GITHUB=https://github.com/login/oauth/access_token
 URL_USER_DATA_GITHUB=https://api.github.com/user
 URL_USER_EMAIL_GITHUB=https://api.github.com/user/emails
 
-CLIENT_ID_FACEBOOK=
-CLIENT_SECRET_FACEBOOK=
-URL_ACCESS_TOKEN_FACEBOOK =https://graph.facebook.com/v18.0/oauth/access_token
-URL_USER_DATA_FACEBOOK=https://graph.facebook.com/v18.0/me
 
-JWT_SECRET=
+
+JWT_SECRET=jwt_super_secreto_para_la_app_storage_sync_vault
+
+
+AWS_ACCESS_KEY_ID =
+AWS_SECRET_ACCESS_KEY =
+AWS_BUCKET =
+AWS_REGION=
+AWS_LAMBDA_ENVIO_CORREO_CONFIRMACION=
 ```
 
 
@@ -145,10 +181,27 @@ $ npm install
 $ npm run dev
 ```
 
+<p align="justify">
+
+🔑El front-end requiere las siguientes ```variables de entorno```:
+
+</p>
+
+```
+VITE_BACKEND_URL=
+VITE_CLIENT_ID_GITHUB=
+```
+
 
 <p align="justify">
-Ademas de esto se debe tener una base de datos en MySQL y tener una cuenta en mailtrap para probar los correos.
 
+Ademas de esto se debe tener una base de datos en MySQL y se debe configurar su cuenta en Github para usar el servicio de OAuth. Y finalmente crear los contratos que se encuntran en el directorio ```Solidity```
 
-Tambien se debe configurar su cuenta en Github para usar el servicio de OAuth.
 </p>
+
+## ✒️ Autores
+
+---
+
+* **Ochoa Virgen Jesus Daniel** - *Desarrollador* - [JDOV7](https://github.com/JDOV7)
+* **Portugal Martinez Nadia** - *Desarrollador* - [nadiap26](https://github.com/nadiap26)

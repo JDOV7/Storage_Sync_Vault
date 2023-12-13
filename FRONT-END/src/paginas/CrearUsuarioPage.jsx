@@ -19,6 +19,7 @@ function CrearUsuarioPage() {
   const [Apellidos, setApellidos] = useState("");
   const [Password, setPassword] = useState("");
   const [PasswordRepetir, setPasswordRepetir] = useState("");
+  const [direccion, setDireccion] = useState("");
   const {
     state: { contract, accounts },
   } = useEth();
@@ -37,14 +38,16 @@ function CrearUsuarioPage() {
         Password,
         Nombres,
         Apellidos,
+        direccion,
       };
-
+      console.log(body);
       const { data } = await clienteAxios.post(`/auth/usuario`, {
         // IdPlanes,
         Correo,
         Password,
         Nombres,
         Apellidos,
+        direccion: accounts[0],
       });
       // const { data } = await clienteAxios.post(`/auth/usuario`);
       //   const { data } = await axios.get(`http://localhost:5000/auth/usuario`);
@@ -191,6 +194,7 @@ function CrearUsuarioPage() {
                         if (!(Correo.length >= 8)) {
                           throw new Error("No se pudo crear la cuenta");
                         }
+                        setDireccion(accounts[0]);
                         const respuesta = await contract.methods
                           .makePayment()
                           .send({

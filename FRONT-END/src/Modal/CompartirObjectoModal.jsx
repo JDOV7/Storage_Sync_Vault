@@ -100,6 +100,7 @@ function CompartirObjectoModal({
               <input
                 type="text"
                 className="p-2 bg-cyan-100 rounded-2xl w-full"
+                placeholder="Correo electronico"
                 value={Correo}
                 onChange={(e) => {
                   setCorreo(e.target.value);
@@ -124,7 +125,7 @@ function CompartirObjectoModal({
                           {cuentas.map((cuenta) => {
                             return (
                               <tr
-                                className="border-b transition duration-300 ease-in-out hover:bg-cyan-500  "
+                                className="border-b transition duration-300 ease-in-out hover:bg-cyan-300 rounded-2xl hover:rounded-2xl "
                                 key={cuenta.Usuario.IdUsuarios}
                               >
                                 <td className="whitespace-nowrap py-2  font-black text-base text-left">

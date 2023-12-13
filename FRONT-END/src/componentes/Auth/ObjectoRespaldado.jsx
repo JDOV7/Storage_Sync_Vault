@@ -9,6 +9,8 @@ import moverseIMG from "../../../public/img/app/moverse.png";
 import compartirIMG from "../../../public/img/app/compartir.png";
 import descargasIMG from "../../../public/img/app/descargas.png";
 import excelIMG from "../../../public/img/app/excel.png";
+import docIMG from "../../../public/img/app/doc.png";
+import pptIMG from "../../../public/img/app/ppt.png";
 import respaldoIMG from "../../../public/img/app/respaldo.png";
 import useAuth from "../../hooks/useAuth";
 import mensajeError from "../../Mensajes/MensajeError";
@@ -34,6 +36,12 @@ function ObjectoRespaldado({ objecto }) {
         break;
       case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
         icono = excelIMG;
+        break;
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        icono = docIMG;
+        break;
+      case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        icono = pptIMG;
         break;
       default:
         break;
@@ -73,6 +81,22 @@ function ObjectoRespaldado({ objecto }) {
                   descargarObjectoRespaldadoFunc(
                     IdObjetos,
                     NombreVista + ".xlsx"
+                  );
+                } else if (
+                  Mime ==
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                ) {
+                  descargarObjectoRespaldadoFunc(
+                    IdObjetos,
+                    NombreVista + ".docx"
+                  );
+                } else if (
+                  Mime ==
+                  "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                ) {
+                  descargarObjectoRespaldadoFunc(
+                    IdObjetos,
+                    NombreVista + ".pptx"
                   );
                 } else {
                   descargarObjectoRespaldadoFunc(IdObjetos, NombreVista);

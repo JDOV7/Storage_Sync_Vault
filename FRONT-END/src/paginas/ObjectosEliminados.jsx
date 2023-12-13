@@ -27,7 +27,9 @@ function ObjectosEliminados() {
         // botonSubirArchivos={handlerSubmit}
       ></PanelIzquierdoOpciones>
       <Header tipoDeBarra={0}></Header>
+
       <div className="py-20 px-52">
+        <h1 className="text-4xl font-black text-black text-center">Papelera</h1>
         <TablaObjectosEliminados></TablaObjectosEliminados>
       </div>
     </>

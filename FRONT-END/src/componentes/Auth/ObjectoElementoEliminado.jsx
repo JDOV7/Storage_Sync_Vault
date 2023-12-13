@@ -6,6 +6,9 @@ import mensajeError from "../../Mensajes/MensajeError";
 import carpeta from "../../../public/img/app/carpeta.png";
 import imagen from "../../../public/img/app/imagen.png";
 import pdf from "../../../public/img/app/pdf.png";
+import excelIMG from "../../../public/img/app/excel.png";
+import docIMG from "../../../public/img/app/doc.png";
+import pptIMG from "../../../public/img/app/ppt.png";
 import recuperarIMG from "../../../public/img/app/recuperar.png";
 
 function ObjectoElementoEliminado({ objecto, funcActualizarTabla }) {
@@ -67,6 +70,15 @@ function ObjectoElementoEliminado({ objecto, funcActualizarTabla }) {
         break;
       case "application/pdf":
         icono = pdf;
+        break;
+      case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        icono = excelIMG;
+        break;
+      case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        icono = docIMG;
+        break;
+      case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        icono = pptIMG;
         break;
       default:
         break;

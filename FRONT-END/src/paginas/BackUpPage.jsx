@@ -29,21 +29,21 @@ const BackUpPage = () => {
 
   return (
     <>
-      <div className="bg-slate-900">
+      <div className="bg-cyan-50">
         <HeaderLandingPage
           btnTexto={"Inicia Sesion"}
           url={"/login"}
         ></HeaderLandingPage>
       </div>
-      <div className="w-full bg-slate-900">
+      <div className="w-full bg-cyan-50">
         <div>
           <h1 className="  pt-32 px-40 text-cyan-500 text-2xl text-center font-semibold">
             BACKUP
           </h1>
-          <h1 className="  py-8 px-40 text-center text-6xl font-extrabold text-white">
+          <h1 className="  py-8 px-40 text-center text-6xl font-extrabold text-black">
             Backups y recuperación de archivos
           </h1>
-          <p className="text-white text-center text-xl py-8 px-48">
+          <p className="text-black text-center text-xl py-8 px-48">
             Sube backups de tus datos, como documentos y archivos importantes,
             desde tu equipo a MEGA para tu tranquilidad. MEGA Backup crea
             backups de datos de manera automática y constante para que puedas

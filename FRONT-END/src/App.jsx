@@ -35,7 +35,14 @@ function App() {
             ></Route>
             <Route path="share" element={<Compartir></Compartir>}></Route>
             <Route path="backup" element={<BackUpPage></BackUpPage>}></Route>
-            <Route path="login" element={<Login></Login>}></Route>
+            <Route
+              path="login"
+              element={
+                <EthProvider>
+                  <Login></Login>
+                </EthProvider>
+              }
+            ></Route>
             <Route
               path="crear-cuenta"
               element={
